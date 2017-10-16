@@ -14,6 +14,9 @@
 #include <thread>
 #include <cmath>
 
+#include "ableton/Link.hpp"
+#include <boost/bind.hpp>
+
 #include "SequencerPage.h"
 #include "ColorPage.h"
 
@@ -38,6 +41,7 @@ class SequencerMapping : public Mapping
 	private:
 		void run();
 		void sync();
+		void setBPM(double bpm);
 		void pageClosed();
         void refresh();
 
@@ -54,6 +58,7 @@ class SequencerMapping : public Mapping
 		bool active = false;
 
         // Sync variables
+        ableton::Link* link;
 		double bpm = 120;
 		int syncDelayms = 1000;
 		int syncCounter;

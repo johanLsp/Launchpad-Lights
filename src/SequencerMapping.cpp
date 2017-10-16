@@ -8,8 +8,16 @@ SequencerMapping::SequencerMapping(LaunchpadOut* output, Stripe* stripe)
 	sequencerPage = new SequencerPage(output);
 	colorPage = new ColorPage(output);
 	currentPage = sequencerPage;
-	
+
 	bpm = 120;
+	link = new ableton::Link(bpm);
+	link->setTempoCallback([this] (const double bpm) {
+if(bpm < 180){
+	this->setBPM(bpm);
+}});
+	link->enable(true);
+	std::cout << link->isEnabled() << std::endl;
+	
 	syncCounter = 0;
 	syncBegin = bclock::now();
 	syncEnd = bclock::now();
@@ -25,7 +33,57 @@ void SequencerMapping::run()
 	{   
 	    if(active)
 	    {
-			if(strobeOn)
+			
+			
+	
+		if(strobeOn)
+		{
+			if(strobeState == 0)
+			{
+				stripe->setColor(255,255,255);
+			}
+			else if(strobeState == 3)
+			{
+				stripe->setColor(0,0,0);
+
+			}
+			strobeState++;
+			if(strobeState == 6) strobeState = 0;
+		}
+		else
+		{
+			ableton::Link::Timeline timeline = link->captureAudioTimeline();
+			std::chrono::microseconds micros = link->clock().micros();
+			
+			int strobeQuantum = TICKS_PER_BEAT/sequencerPage->getStrobeSpeed();
+			int colorQuantum = TICKS_PER_BEAT/sequencerPage->getColorSpeed();
+
+			//double beat = timeline.beatAtTime(micros, quantum);
+			double beat = timeline.phaseAtTime(micros, strobeQuantum);
+				
+			
+			int strobeIndex = fmod(beat, strobeQuantum)*16/strobeQuantum;
+			int colorIndex = fmod(beat, colorQuantum)*16/colorQuantum;
+		
+			if(sequencerPage->getStrobe(strobeIndex))
+			{	
+				Color color = sequencerPage->getColor(colorIndex);
+				stripe->setColor(color.red, color.green, color.blue);  
+			}
+			else
+			{
+				stripe->setColor(0, 0, 0);
+			}
+		}
+		
+		usleep(10000);
+		
+
+		//startTime = bclock::now() - boost::chrono::microseconds((int)(phaseMicros*1e3));
+
+		
+		
+			/*if(strobeOn)
 			{
 				if(strobeState == 0)
 				{
@@ -41,6 +99,9 @@ void SequencerMapping::run()
 			}
 			else
 			{
+				
+				
+				
 				int colorSpeed = sequencerPage->getColorSpeed();
 				int colorIndex = ((int)floor(1.0*tick*colorSpeed/TICKS_PER_BEAT)) % 16;
 				
@@ -69,8 +130,9 @@ void SequencerMapping::run()
 	        if(timeToSleepUs > 0)
             {
 	            usleep(timeToSleepUs);
-	            //std::cout << "Sleep : " << timeToSleepUs *ticksPerSeconds/1e6 << std::endl;
 	        }
+	        std::cout << "Sleep : " << timeToSleepUs *ticksPerSeconds/1e6 << std::endl;
+*/
 	    }
 	    else
 	    {
@@ -144,9 +206,20 @@ void SequencerMapping::stop()
     active = false;
 }
 
+void SequencerMapping::setBPM(double bpm)
+{
+		this->bpm = bpm;		
+}
+
 void SequencerMapping::sync()
 {
-    btime syncCurrent = bclock::now();
+	
+			
+		int strobeQuantum = TICKS_PER_BEAT/sequencerPage->getStrobeSpeed();
+		int colorQuantum = TICKS_PER_BEAT/sequencerPage->getColorSpeed();
+		
+	std::cout << "Color : " << colorQuantum << " - Strobe : " << strobeQuantum << " | BPM : " << bpm << std::endl;
+     btime syncCurrent = bclock::now();
      
 	bduration elapsed = syncCurrent - syncEnd;
 	
@@ -171,8 +244,34 @@ void SequencerMapping::sync()
 		std::cout << bpm << std::endl;
 		startTime = syncBegin;
 		tick = 0;
+		
+		ableton::Link::Timeline timeline = link->captureAudioTimeline();
+		timeline.setTempo(bpm, link->clock().micros());
+		link->commitAudioTimeline(timeline);
 	}
-}
+	
+	/*
+	
+			this->bpm = bpm;
+		
+		ableton::Link::Timeline timeline = link->captureAppTimeline();
+		std::chrono::microseconds micros = link->clock().micros();
+		
+		int quantum = TICKS_PER_BEAT/sequencerPage->getStrobeSpeed();
+		
+		double beat = timeline.beatAtTime(micros, quantum);
+		double phase = timeline.phaseAtTime(micros, quantum);
+		
+		double phaseMicros = phase*60/bpm*1e6;
+		
+		startTime = bclock::now() - boost::chrono::microseconds((int)(phaseMicros*1e3));
+		bduration d = bclock::now() - startTime;
+		std::cout << d.count() << std::endl;
+		
+		std::cout << micros.count() << " - quantum : " << quantum << " - beat : " << beat << " - phase : " << phase << " (" << phaseMicros << ")"<< std::endl;
+
+
+*/}
 
 void SequencerMapping::pageClosed()
 {
