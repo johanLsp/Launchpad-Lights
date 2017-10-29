@@ -29,52 +29,49 @@ if(bpm < 180){
 
 void SequencerMapping::run()
 {
+	int previousIndex = -1;
+	
 	while(running)
 	{   
 	    if(active)
 	    {
-			
-			
-	
-		if(strobeOn)
-		{
-			if(strobeState == 0)
-			{
-				stripe->setColor(255,255,255);
-			}
-			else if(strobeState == 3)
-			{
-				stripe->setColor(0,0,0);
-
-			}
-			strobeState++;
-			if(strobeState == 6) strobeState = 0;
-		}
-		else
-		{
 			ableton::Link::Timeline timeline = link->captureAudioTimeline();
 			std::chrono::microseconds micros = link->clock().micros();
 			
-			int strobeQuantum = TICKS_PER_BEAT/sequencerPage->getStrobeSpeed();
-			int colorQuantum = TICKS_PER_BEAT/sequencerPage->getColorSpeed();
+			int colorQuantum = TICKS_PER_BEAT/sequencerPage->getSpeed();
 
 			//double beat = timeline.beatAtTime(micros, quantum);
-			double beat = timeline.phaseAtTime(micros, strobeQuantum);
-				
-			
-			int strobeIndex = fmod(beat, strobeQuantum)*16/strobeQuantum;
-			int colorIndex = fmod(beat, colorQuantum)*16/colorQuantum;
+			double beat = timeline.phaseAtTime(micros, colorQuantum);
+							
+			int colorIndex = fmod(beat, colorQuantum)*32/colorQuantum;
 		
-			if(sequencerPage->getStrobe(strobeIndex))
-			{	
-				Color color = sequencerPage->getColor(colorIndex);
-				stripe->setColor(color.red, color.green, color.blue);  
+			Color color = sequencerPage->getColor(colorIndex);
+
+			if(colorIndex != previousIndex)
+			{
+				sequencerPage->setCurrent(colorIndex);
+				previousIndex = colorIndex;
+			}
+			
+			if(strobeOn)
+			{
+				if(strobeState == 0)
+				{
+					stripe->setColor(255,255,255);
+				}
+				else if(strobeState == 3)
+				{
+					stripe->setColor(0,0,0);
+
+				}
+				strobeState++;
+				if(strobeState == 6) strobeState = 0;
 			}
 			else
 			{
-				stripe->setColor(0, 0, 0);
+				
+				stripe->setColor(color.red, color.green, color.blue);
 			}
-		}
 		
 		usleep(10000);
 		
@@ -146,25 +143,22 @@ void SequencerMapping::run()
 
 void SequencerMapping::noteOn(int channel, int note)
 {
-	if(note == NOTE_COLOR)
-	{
-		if(currentPage != colorPage)
-		{
-			currentPage = colorPage;
-		}
-		else
-		{
-			currentPage = sequencerPage;
-		}
-		currentPage->refresh();
-	}
-	else if(note == NOTE_BPM)
+	if(note == NOTE_BPM)
 	{
 	    sync();
-	}
-	else if(note == NOTE_DUMMY1 || note == NOTE_DUMMY2 || note == NOTE_DUMMY3)
+	}	
+	else if(note == NOTE_SPEED_DOWN)
 	{
-	    sync();
+	    sequencerPage->speedDown();
+	    refresh();
+	}
+	else if(note == NOTE_SPEED_UP)
+	{
+	    sequencerPage->speedUp();
+	    refresh();
+	}
+	else if(note == NOTE_DUMMY2 || note == NOTE_DUMMY3)
+	{
 	}
 	else if(note == NOTE_DECK)
 	{
@@ -215,10 +209,9 @@ void SequencerMapping::sync()
 {
 	
 			
-		int strobeQuantum = TICKS_PER_BEAT/sequencerPage->getStrobeSpeed();
-		int colorQuantum = TICKS_PER_BEAT/sequencerPage->getColorSpeed();
+		int colorQuantum = TICKS_PER_BEAT/sequencerPage->getSpeed();
 		
-	std::cout << "Color : " << colorQuantum << " - Strobe : " << strobeQuantum << " | BPM : " << bpm << std::endl;
+	std::cout << "Color : " << colorQuantum  << " | BPM : " << bpm << std::endl;
      btime syncCurrent = bclock::now();
      
 	bduration elapsed = syncCurrent - syncEnd;
@@ -285,7 +278,9 @@ void SequencerMapping::pageClosed()
 void SequencerMapping::refresh()
 {
 	currentPage->refresh();
-	output->setLed(NOTE_COLOR, colorPage->getColor());
+	output->setLed(NOTE_SPEED_DOWN, Color(50, 50, 50));
+	output->setLed(NOTE_SPEED_UP, Color(50, 50, 50));
+	output->setLed(NOTE_STROBE, Color(255, 255, 255));
 	currentPage->setCurrentColor(colorPage->getColor());
 	output->setLed(NOTE_DECK, sequencerPage->getDeck() ? Color(255,0,0) : Color(0,255,0));
 

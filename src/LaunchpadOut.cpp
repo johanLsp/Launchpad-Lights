@@ -58,9 +58,9 @@ void LaunchpadOut::setLed(uint8_t x, uint8_t y, uint8_t color)
 
 void LaunchpadOut::setLed(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue)
 {
-	if(x < 1 || x > 8)
+	if(x < 1 || x > 9)
 		return;
-	if(y < 1 || y > 8) 
+	if(y < 1 || y > 9) 
 		return;
 
 	setLed(10*y+x, red, green, blue);

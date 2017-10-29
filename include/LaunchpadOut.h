@@ -11,6 +11,21 @@ class Color {
 		Color():red(0),green(0),blue(0) {};
 		Color(uint8_t red, uint8_t green, uint8_t blue)
 		:red(red),green(green),blue(blue){};
+		
+		bool operator==(Color rhs)
+		{
+		  return rhs.red == red && rhs.green == green && rhs.blue == blue;
+		}
+		
+		bool operator!=(Color rhs)
+		{
+		  return !(rhs==*this);
+		}
+		
+		Color dim()
+		{
+			return Color(red/10, green/10, blue/10);
+		}
 	
 	public:
 		uint8_t red;
