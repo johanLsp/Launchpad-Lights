@@ -5,6 +5,7 @@
 
 #include "Page.h"
 #include <iostream>
+#include "Color.h"
 
 class SequencerPage : public Page
 {

@@ -9,6 +9,7 @@ set(SOURCE_FILES
 		SequencerMapping.cpp
 		Page.cpp
 		ColorPage.cpp
+		Color.cpp
 		SequencerPage.cpp)
 
 add_executable(lights ${SOURCE_FILES})

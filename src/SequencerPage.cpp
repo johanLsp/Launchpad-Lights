@@ -3,20 +3,14 @@
 SequencerPage::SequencerPage(LaunchpadOut* output)
 :output(output)
 {
-	palette[0] = Color(255,0,0);
-	palette[1] = Color(0,255,0);
-	palette[2] = Color(0,0,255);
-	palette[3] = Color(255,255,0);
-	palette[4] = Color(255,0,255);
-	palette[5] = Color(0,255,255);
-	palette[6] = Color(255,0,0);
-	palette[7] = Color(255,255,255);
-
-	for(int i = 0; i < 32; i++)
-	{
-		colors[0][i] = Color(0, 0, 0);
-		colors[1][i] = Color(0, 0, 0);
-	}
+	palette[0] = Color::Red;
+	palette[1] = Color::Green;
+	palette[2] = Color::Blue;
+	palette[3] = Color::Cyan;
+	palette[4] = Color::Magenta;
+	palette[5] = Color::Yellow;
+	palette[6] = Color::Black;
+	palette[7] = Color::White;
 }
 
 SequencerPage::~SequencerPage()
@@ -79,7 +73,7 @@ void SequencerPage::setColor(int deck, int index)
 	}
 	else
 	{
-		colors[deck][index] = Color(0,0,0);
+		colors[deck][index] = Color::Black;
 	}
 }
 
@@ -89,7 +83,7 @@ void SequencerPage::setCurrent(int index)
 
 	output->setLed(getNote(currentDeck, previous), colors[currentDeck][previous].dim());
 	
-	if(colors[currentDeck][index] == Color(0,0,0))
+	if(colors[currentDeck][index] == Color::Black)
 		output->setLed(getNote(currentDeck, index), Color(50,50,50));
 	else
 		output->setLed(getNote(currentDeck, index), colors[currentDeck][index]);
