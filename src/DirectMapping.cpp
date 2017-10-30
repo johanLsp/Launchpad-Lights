@@ -5,9 +5,6 @@
 DirectMapping::DirectMapping(LaunchpadOut* output, Stripe* stripe)
 :output(output), stripe(stripe)
 {
-
-
-
 }
 
 void DirectMapping::start()

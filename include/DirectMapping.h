@@ -21,8 +21,6 @@ class DirectMapping : public Mapping
 	    Stripe* stripe;
 	    
 	    int num_pressed = 0;
-
-
 };
 
 

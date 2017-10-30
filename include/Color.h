@@ -28,6 +28,7 @@ class Color {
 		static const Color Magenta;
 		static const Color Yellow;
 		static const Color White;
+		static const Color Grey;
 };
 
 

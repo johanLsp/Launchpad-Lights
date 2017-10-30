@@ -18,7 +18,6 @@
 #include <boost/bind.hpp>
 
 #include "SequencerPage.h"
-#include "ColorPage.h"
 
 typedef boost::chrono::system_clock bclock;
 typedef boost::chrono::system_clock::time_point btime;
@@ -52,7 +51,7 @@ class SequencerMapping : public Mapping
 		
 		// Mapping pages
 		Page* currentPage;
-		ColorPage* colorPage;
+		//ColorPage* colorPage;
 		SequencerPage* sequencerPage;
 		
 		bool active = false;
@@ -64,9 +63,7 @@ class SequencerMapping : public Mapping
 		int syncCounter;
 		btime syncBegin;
 		btime syncEnd;
-		
-		btime startTime;
-		
+				
 		int tick = 0;
 		
 		std::thread sequencerThread;

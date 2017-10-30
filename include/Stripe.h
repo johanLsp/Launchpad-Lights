@@ -5,7 +5,7 @@
 #include <wiringPi.h>
 #include <softPwm.h>
 #include <iostream>
-
+#include "Color.h"
 
 class Stripe
 {
@@ -18,6 +18,9 @@ class Stripe
 	private:
 		bool wiringPiSupport;
 
+		void setColor(Color color);
+
+    private:
 		int redPin = 0;
         int greenPin = 9;
         int bluePin = 13;

@@ -58,8 +58,6 @@ bool SequencerPage::noteOn(int note)
 
 		setColor(deck, index);
         output->setLed(note, colors[deck][index].dim());
-		std::cout << "Channel " << deck << " | Index " << index << " (" << note << ")" << std::endl;
-
 	}
 		
     return true;
@@ -84,7 +82,7 @@ void SequencerPage::setCurrent(int index)
 	output->setLed(getNote(currentDeck, previous), colors[currentDeck][previous].dim());
 	
 	if(colors[currentDeck][index] == Color::Black)
-		output->setLed(getNote(currentDeck, index), Color(50,50,50));
+		output->setLed(getNote(currentDeck, index), Color::Grey);
 	else
 		output->setLed(getNote(currentDeck, index), colors[currentDeck][index]);
 
@@ -94,14 +92,12 @@ void SequencerPage::speedUp()
 {
     if(speed == TICKS_PER_BEAT) return;
     speed *= 2;
-    std::cout << "Speed : " << speed << std::endl;
 }
 
 void SequencerPage::speedDown()
 {
     if(speed == 1) return;
     speed /= 2;
-    std::cout << "Speed : " << speed << std::endl;
 }
 
 void SequencerPage::switchDeck()

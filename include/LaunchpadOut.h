@@ -6,9 +6,7 @@
 #include "Color.h"
 
 class LaunchpadOut
-{
-
-        
+{    
 	public:
 	    LaunchpadOut();
 	    ~LaunchpadOut();
@@ -22,9 +20,6 @@ class LaunchpadOut
 	
 	private:
 	    RtMidiOut *output;
-
-
-
 };
 
 #endif // LAUNCHPAD_OUT_H
