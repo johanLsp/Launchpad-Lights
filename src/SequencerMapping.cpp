@@ -120,7 +120,7 @@ void SequencerMapping::noteOff(int channel, int note)
 	if(note == NOTE_STROBE)
 	{
 		strobeOn = false;
-		output->setLed(note, Color(0,0,0));
+		output->setLed(note, Color::Grey);
 
 	}
 }
@@ -190,11 +190,14 @@ void SequencerMapping::pageClosed()
 void SequencerMapping::refresh()
 {
 	currentPage->refresh();
-	output->setLed(NOTE_SPEED_DOWN, Color::Grey);
-	output->setLed(NOTE_SPEED_UP, Color::Grey);
-	output->setLed(NOTE_STROBE, Color::White);
+	//output->setLed(NOTE_SPEED_DOWN, Color::Grey);
+	//output->setLed(NOTE_SPEED_UP, Color::Grey);
+	output->flashLed(NOTE_SPEED_DOWN, Color::Grey);
+	output->flashLed(NOTE_SPEED_UP, Color::Grey);
+	output->setLed(NOTE_STROBE, Color::Grey);
+	output->setLed(NOTE_DECK, sequencerPage->getDeck() ? Color(0,255,0).dim() : Color(0,0,255).dim());
+	output->pulseLed(NOTE_MAPPING, 5);
 	//currentPage->setCurrentColor(colorPage->getColor());
-	output->setLed(NOTE_DECK, sequencerPage->getDeck() ? Color::Red : Color::Green);
 }
 
 

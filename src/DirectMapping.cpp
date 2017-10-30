@@ -9,6 +9,7 @@ DirectMapping::DirectMapping(LaunchpadOut* output, Stripe* stripe)
 
 void DirectMapping::start()
 {
+	output->setAllLed(0);
 	for(unsigned char r = 0; r < 4; r++)
 	{
 		for(unsigned char g = 0; g < 4; g++)
@@ -21,7 +22,8 @@ void DirectMapping::start()
 			}
 		}
 	}
-
+	
+	output->pulseLed(NOTE_MAPPING, 5);
 	num_pressed = 0;
 }
 

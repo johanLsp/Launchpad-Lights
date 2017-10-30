@@ -49,7 +49,7 @@ void LaunchpadIn::receive(double deltatime, std::vector<unsigned char> *message,
     int channel = (int)message->at(0);
     int note    = (int)message->at(1);
 	int command = (int)message->at(2);
-    
+
     switch (command)
     {
     	case 127:

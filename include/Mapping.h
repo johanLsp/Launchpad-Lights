@@ -4,6 +4,8 @@
 #include "LaunchpadOut.h"
 #include "Stripe.h"
 
+#define NOTE_MAPPING 104
+
 class Mapping
 {
 	public:

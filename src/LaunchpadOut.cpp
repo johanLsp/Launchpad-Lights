@@ -95,6 +95,42 @@ void LaunchpadOut::setAllLed(int color)
 }
 
 
+void LaunchpadOut::flashLed(int note, Color color)
+{
+	setLed(note, color);
+	int channel;
+	// CC (177) message for top row, NoteOn(145) for all others
+	if (note > 100)
+		channel = 177;
+	else
+		channel = 145;
+
+	std::vector<unsigned char> message;
+	message.push_back(channel);
+	message.push_back(note);
+	message.push_back(0);
+	output->sendMessage(&message);
+}
+
+void LaunchpadOut::pulseLed(int note, int color)
+{
+	//setLed(note, color);
+	int channel;
+	// CC (178) message for top row, NoteOn(146) for all others
+	if (note > 100)
+		channel = 178;
+	else
+		channel = 146;
+
+	std::vector<unsigned char> message;
+	message.push_back(channel);
+	message.push_back(note);
+	message.push_back(color);
+	output->sendMessage(&message);
+
+}
+
+
 LaunchpadOut::~LaunchpadOut()
 {
 }

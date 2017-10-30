@@ -43,7 +43,6 @@ void SequencerPage::refresh()
 
 bool SequencerPage::noteOn(int note)
 {
-	
     // Buttons on the right
 	if(note%10 == 9)
 	{
