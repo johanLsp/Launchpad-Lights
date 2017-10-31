@@ -84,6 +84,12 @@ bool SnakePage::noteOn(int note)
 // One iteration of the game loop
 void SnakePage::setCurrent(int index)
 {
+	if (gameOver)
+	{
+		endAnimation();
+		return;
+	}
+
 	if(powerUp)
 	{
 		powerUpTimer--;
@@ -94,11 +100,7 @@ void SnakePage::setCurrent(int index)
 				body[i].color = Color::Green;			
 		}
 	}
-	if (gameOver)
-	{
-		endAnimation();
-		return;
-	}
+
 	output->setLed(body.back().x, body.back().y, 0);
 	int dx, dy;
 	switch(direction)
@@ -170,6 +172,7 @@ void SnakePage::setCurrent(int index)
 		else
 		{
 			gameOver = true;
+			gameOverTimer = 20;
 			output->setLed(body[0].x, body[0].y, Color::Red);
 		}
 	}
@@ -178,11 +181,23 @@ void SnakePage::setCurrent(int index)
 
 void SnakePage::endAnimation()
 {
-	Cell lastCell = body.back();
-	if(lastCell.x != body[0].x || lastCell.y != body[0].y)
-		output->setLed(lastCell.x, lastCell.y, Color::Black);		
-	body.pop_back();
-	
-	if(body.size() == 3)
+	if(body.size() > 3)
+	{
+		Cell lastCell = body.back();
+		if(lastCell.x != body[0].x || lastCell.y != body[0].y)
+			output->setLed(lastCell.x, lastCell.y, Color::Black);		
+		body.pop_back();
+		gameOverTimer = 21;
+	}
+	else if(gameOverTimer == 20)
+	{
+		std::string gameoverStr = "Game over";
+		output->scrollText(gameoverStr);
+	}
+	else if(gameOverTimer == 0)
+	{
+		refresh();
 		gameOver = false;
+	}
+	gameOverTimer--;
 }

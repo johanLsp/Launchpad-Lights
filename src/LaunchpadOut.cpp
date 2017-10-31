@@ -170,6 +170,28 @@ void LaunchpadOut::commitTransaction()
 }
 
 
+void LaunchpadOut::scrollText(std::string text)
+{
+
+	std::vector<unsigned char> message;
+	message.push_back(240);
+	message.push_back(0);
+	message.push_back(32);
+	message.push_back(41);
+	message.push_back(2);
+	message.push_back(24);
+	message.push_back(20);
+
+	message.push_back(5);
+	message.push_back(0);
+
+	for(int i = 0; i < text.size(); i++)
+		message.push_back(text[i]);
+
+	message.push_back(247);
+	output->sendMessage(&message);
+}
+
 LaunchpadOut::~LaunchpadOut()
 {
 }

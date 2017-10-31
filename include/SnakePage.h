@@ -46,6 +46,7 @@ class SnakePage : public Page
 		Direction direction;
 		Cell seed;
 		bool gameOver = false;
+		int gameOverTimer;
 		bool powerUp = false;
 		int powerUpTimer;
 	

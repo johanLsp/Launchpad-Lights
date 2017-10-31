@@ -21,6 +21,8 @@ class LaunchpadOut
 
 		void pulseLed(int x, int y, Color color);
 		void pulseLed(int note, int color);
+		void scrollText(std::string text);
+		
 		
 		void beginTransaction();
 		void commitTransaction();
