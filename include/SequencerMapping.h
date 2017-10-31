@@ -1,7 +1,7 @@
 #ifndef SEQUENCER_MAPPING_H
 #define SEQUENCER_MAPPING_H
 
-#define NOTE_BPM 200
+#define NOTE_PAGE 105
 #define NOTE_SPEED_DOWN 106
 #define NOTE_SPEED_UP 107
 #define NOTE_DUMMY2 108
@@ -18,6 +18,7 @@
 #include <boost/bind.hpp>
 
 #include "SequencerPage.h"
+#include "SnakePage.h"
 
 typedef boost::chrono::system_clock bclock;
 typedef boost::chrono::system_clock::time_point btime;
@@ -53,6 +54,7 @@ class SequencerMapping : public Mapping
 		Page* currentPage;
 		//ColorPage* colorPage;
 		SequencerPage* sequencerPage;
+		SnakePage* snakePage;
 		
 		bool active = false;
 

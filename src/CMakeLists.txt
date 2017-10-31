@@ -10,7 +10,8 @@ set(SOURCE_FILES
 		Page.cpp
 		ColorPage.cpp
 		Color.cpp
-		SequencerPage.cpp)
+		SequencerPage.cpp
+		SnakePage.cpp)
 
 add_executable(lights ${SOURCE_FILES})
 

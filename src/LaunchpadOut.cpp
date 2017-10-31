@@ -117,6 +117,12 @@ void LaunchpadOut::flashLed(int note, Color color)
 	output->sendMessage(&message);
 }
 
+void LaunchpadOut::pulseLed(int x, int y, Color color)
+{
+	pulseLed(10*y+x, 5);
+}
+
+
 void LaunchpadOut::pulseLed(int note, int color)
 {
 	//setLed(note, color);
