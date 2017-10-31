@@ -11,7 +11,7 @@ Stripe::Stripe()
     wiringPiSetup();
     softPwmCreate(redPin, 0, 100);
     softPwmCreate(bluePin, 0, 100);
-    softPwmCreate(greenPin, 0, 100);   	        
+    softPwmCreate(greenPin, 0, 100);   
 }
 
 
