@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <ctime>
+#include <sstream>
 
 struct Cell {
 	uint8_t x;
@@ -45,6 +46,7 @@ class SnakePage : public Page
 		std::deque<Cell> body;
 		Direction direction;
 		Cell seed;
+		int score = 0;
 		bool gameOver = false;
 		int gameOverTimer;
 		bool powerUp = false;

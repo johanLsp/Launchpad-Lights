@@ -151,6 +151,7 @@ void SnakePage::setCurrent(int index)
 		{
 			body.push_back(lastCell);
 		}
+		score++;
 		newSeed();
 		output->pulseLed(seed.x, seed.y, seed.color);		
 	}
@@ -191,13 +192,15 @@ void SnakePage::endAnimation()
 	}
 	else if(gameOverTimer == 20)
 	{
-		std::string gameoverStr = "Game over";
-		output->scrollText(gameoverStr);
+		std::stringstream gameoverStr;
+		gameoverStr << "Game over :  " << score;
+		output->scrollText(gameoverStr.str());
 	}
 	else if(gameOverTimer == 0)
 	{
 		refresh();
 		gameOver = false;
+		score = 0;
 	}
 	gameOverTimer--;
 }

@@ -3,10 +3,29 @@
 
 Stripe::Stripe()
 {
-    if ((fopen ("/proc/cpuinfo", "r")) == NULL)
+    wiringPiSupport = true;
+    FILE *cpuFd ;
+    char line [120] ;
+
+    if ((cpuFd = fopen ("/proc/cpuinfo", "r")) == NULL)
+    {
         wiringPiSupport = false;
-    
-    if(!wiringPiSupport) return;
+    }
+    else
+    {
+        while (fgets (line, 120, cpuFd) != NULL)
+            if (strncmp (line, "Hardware", 8) == 0)
+                break ;
+
+        if (strncmp (line, "Hardware", 8) != 0)
+            wiringPiSupport = false;
+    }
+
+    if(!wiringPiSupport)
+    {
+        std::cout << "No wiringPi support" << std::endl;
+        return;
+    }
 
     wiringPiSetup();
     softPwmCreate(redPin, 0, 100);
