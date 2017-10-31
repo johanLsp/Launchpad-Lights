@@ -15,17 +15,12 @@ class Stripe
 		
 		void setColor(uint8_t red, uint8_t green, uint8_t blue);
 
+	private:
+		bool wiringPiSupport;
 
-
-
-
-    private:
-	int redPin = 0;
+		int redPin = 0;
         int greenPin = 9;
         int bluePin = 13;
-
-
 };
-
 
 #endif // STRIPE_H
