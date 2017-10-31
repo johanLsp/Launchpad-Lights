@@ -20,7 +20,9 @@ class Stripe
 
 		void setColor(Color color);
 
-    private:
+	private:
+		bool wiringPiSupport;
+
 		int redPin = 0;
         int greenPin = 9;
         int bluePin = 13;
