@@ -119,7 +119,12 @@ void LaunchpadOut::flashLed(int note, Color color)
 
 void LaunchpadOut::pulseLed(int x, int y, Color color)
 {
-	pulseLed(10*y+x, 5);
+	if(color == Color::Red)
+		pulseLed(10*y+x, 5);
+	else if(color == Color::Blue)
+		pulseLed(10*y+x, 45);
+	else
+		pulseLed(10*y+x, 30);
 }
 
 

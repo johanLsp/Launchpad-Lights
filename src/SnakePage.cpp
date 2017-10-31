@@ -25,7 +25,13 @@ void SnakePage::newSeed()
 	{
 		seed.x = 8.0*rand()/RAND_MAX +1;
 		seed.y = 8.0*rand()/RAND_MAX +1;
-		seed.color = Color::Red;
+
+		double randPower = 1.0*rand()/RAND_MAX;
+
+		if(randPower < 0.5-exp(-1.0*body.size()/16))
+			seed.color = Color::Blue;
+		else
+			seed.color = Color::Red;
 	} while (isColliding(seed, true));
 }
 
@@ -78,7 +84,16 @@ bool SnakePage::noteOn(int note)
 // One iteration of the game loop
 void SnakePage::setCurrent(int index)
 {
-
+	if(powerUp)
+	{
+		powerUpTimer--;
+		if(powerUpTimer == 0)
+		{
+			powerUp = false;
+			for(int i = 1; i < body.size(); i++)
+				body[i].color = Color::Green;			
+		}
+	}
 	if (gameOver)
 	{
 		endAnimation();
@@ -123,15 +138,40 @@ void SnakePage::setCurrent(int index)
 
 	if(body[0].x == seed.x && body[0].y == seed.y)
 	{
-		body.push_back(lastCell);
+		if(seed.color == Color::Blue)
+		{
+			powerUp = true;
+			powerUpTimer = 20;
+			for(int i = 1; i < body.size(); i++)
+				body[i].color = Color::Blue;
+		}
+		else
+		{
+			body.push_back(lastCell);
+		}
 		newSeed();
 		output->pulseLed(seed.x, seed.y, seed.color);		
 	}
 	if(isColliding(body[0], false))
 	{
-		gameOver = true;
+		if(powerUp)
+		{
 
-		output->setLed(body[0].x, body[0].y, Color::Red);
+			while(body.back().x != body[0].x | body.back().y != body[0].y) 
+			{
+				body.pop_back();
+			}
+			powerUp = false;
+			for(int i = 1; i < body.size(); i++)
+				body[i].color = Color::Green;
+
+			refresh();
+		}
+		else
+		{
+			gameOver = true;
+			output->setLed(body[0].x, body[0].y, Color::Red);
+		}
 	}
 }
 
