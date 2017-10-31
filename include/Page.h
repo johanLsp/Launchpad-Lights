@@ -14,8 +14,10 @@ class Page
 		
 		virtual bool noteOn(int note) = 0;
 		virtual void refresh() = 0;
+		virtual void setCurrent(int index) = 0;
 		
 		void setCurrentColor(Color color);
+
 		
 	protected:
 		LaunchpadOut* output;

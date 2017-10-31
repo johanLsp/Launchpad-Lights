@@ -117,6 +117,17 @@ void LaunchpadOut::flashLed(int note, Color color)
 	output->sendMessage(&message);
 }
 
+void LaunchpadOut::pulseLed(int x, int y, Color color)
+{
+	if(color == Color::Red)
+		pulseLed(10*y+x, 5);
+	else if(color == Color::Blue)
+		pulseLed(10*y+x, 45);
+	else
+		pulseLed(10*y+x, 30);
+}
+
+
 void LaunchpadOut::pulseLed(int note, int color)
 {
 	//setLed(note, color);
@@ -158,6 +169,28 @@ void LaunchpadOut::commitTransaction()
 	transactional = false;
 }
 
+
+void LaunchpadOut::scrollText(std::string text)
+{
+
+	std::vector<unsigned char> message;
+	message.push_back(240);
+	message.push_back(0);
+	message.push_back(32);
+	message.push_back(41);
+	message.push_back(2);
+	message.push_back(24);
+	message.push_back(20);
+
+	message.push_back(5);
+	message.push_back(0);
+
+	for(int i = 0; i < text.size(); i++)
+		message.push_back(text[i]);
+
+	message.push_back(247);
+	output->sendMessage(&message);
+}
 
 LaunchpadOut::~LaunchpadOut()
 {

@@ -18,7 +18,11 @@ class LaunchpadOut
 		void setLed(uint8_t note, uint8_t red, uint8_t green, uint8_t blue);
 		void setLed(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue);
 		void flashLed(int note, Color color);
+
+		void pulseLed(int x, int y, Color color);
 		void pulseLed(int note, int color);
+		void scrollText(std::string text);
+		
 		
 		void beginTransaction();
 		void commitTransaction();

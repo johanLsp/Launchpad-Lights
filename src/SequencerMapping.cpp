@@ -6,6 +6,7 @@ SequencerMapping::SequencerMapping(LaunchpadOut* output, Stripe* stripe)
 :output(output), stripe(stripe)
 {
 	sequencerPage = new SequencerPage(output);
+	snakePage = new SnakePage(output);
 	//colorPage = new ColorPage(output);
 	currentPage = sequencerPage;
 
@@ -48,7 +49,7 @@ void SequencerMapping::run()
 		
 			if(colorIndex != previousIndex)
 			{
-				sequencerPage->setCurrent(colorIndex);
+				currentPage->setCurrent(colorIndex);
 				previousIndex = colorIndex;
 			}
 			
@@ -85,7 +86,15 @@ void SequencerMapping::run()
 
 void SequencerMapping::noteOn(int channel, int note)
 {
-	if(note == NOTE_SPEED_DOWN)
+	if(note == NOTE_PAGE)
+	{
+		if(currentPage == sequencerPage)
+			currentPage = snakePage;
+		else
+			currentPage = sequencerPage;
+		refresh();
+	}
+	else if(note == NOTE_SPEED_DOWN)
 	{
 	    sequencerPage->speedDown();
 	    refresh();

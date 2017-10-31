@@ -6,6 +6,7 @@
 #include <softPwm.h>
 #include <iostream>
 #include "Color.h"
+#include <cstring>
 
 class Stripe
 {
