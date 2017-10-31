@@ -42,8 +42,8 @@ void LaunchpadOut::setLed(uint8_t note, uint8_t red, uint8_t green, uint8_t blue
 	if(!transactional)
 	{
 		message.push_back(247);
+		output->sendMessage(&message);		
 	}
-	output->sendMessage(&message);
 }
 
 void LaunchpadOut::setLed(uint8_t x, uint8_t y, uint8_t color)
