@@ -19,11 +19,16 @@ class LaunchpadOut
 		void setLed(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue);
 		void flashLed(int note, Color color);
 		void pulseLed(int note, int color);
+		
+		void beginTransaction();
+		void commitTransaction();
 
 
 	
 	private:
 	    RtMidiOut *output;
+	    bool transactional = false;
+	    std::vector<unsigned char> message;
 };
 
 #endif // LAUNCHPAD_OUT_H

@@ -21,23 +21,28 @@ LaunchpadOut::LaunchpadOut()
 
 
 void LaunchpadOut::setLed(uint8_t note, uint8_t red, uint8_t green, uint8_t blue)
-{
-	std::vector<unsigned char> message;
-	message.push_back(240);
-	message.push_back(0);
-	message.push_back(32);
-	message.push_back(41);
-	message.push_back(2);
-	message.push_back(24);
-	message.push_back(11);
+{	
+	if(!transactional)
+	{
+		message.clear();
+		message.push_back(240);
+		message.push_back(0);
+		message.push_back(32);
+		message.push_back(41);
+		message.push_back(2);
+		message.push_back(24);
+		message.push_back(11);
+	}
+	
 	message.push_back(note);
 	message.push_back(red*63.0/255);
 	message.push_back(green*63.0/255);
 	message.push_back(blue*63.0/255);
-	message.push_back(247);
 	
-	output->sendMessage(&message);
-	
+	if(!transactional)
+	{
+		message.push_back(247);
+	}
 	output->sendMessage(&message);
 }
 
@@ -128,6 +133,29 @@ void LaunchpadOut::pulseLed(int note, int color)
 	message.push_back(color);
 	output->sendMessage(&message);
 
+}
+
+void LaunchpadOut::beginTransaction()
+{	
+	message.clear();
+	message.push_back(240);
+	message.push_back(0);
+	message.push_back(32);
+	message.push_back(41);
+	message.push_back(2);
+	message.push_back(24);
+	
+	message.push_back(11);
+	
+	transactional = true;
+}
+
+void LaunchpadOut::commitTransaction()
+{
+	message.push_back(247);
+	output->sendMessage(&message);
+	
+	transactional = false;
 }
 
 

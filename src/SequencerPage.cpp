@@ -21,8 +21,10 @@ SequencerPage::~SequencerPage()
 void SequencerPage::refresh()
 {
 	// Should think of a smart refresh without clearing the whole launchpad to avoid flickering
-	output->setAllLed(0);
+	//output->setAllLed(0);
 
+	output->beginTransaction();
+	
 	for(int deck = 0; deck < 2; deck++)
 	{
 		for(int index = 0; index < 32; index++)
@@ -31,7 +33,7 @@ void SequencerPage::refresh()
 			output->setLed(getNote(deck, index), colors[deck][index].dim());
 		}
 	}
-    
+   
     for(int i = 0; i < 8; i++)
     {
 		if(i == currentColorIdx)
@@ -39,6 +41,8 @@ void SequencerPage::refresh()
 		else
 			output->setLed(9, i+1, palette[i].dim());
 	}
+
+	output->commitTransaction();
 }
 
 bool SequencerPage::noteOn(int note)

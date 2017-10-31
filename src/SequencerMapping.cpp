@@ -126,9 +126,9 @@ void SequencerMapping::noteOff(int channel, int note)
 }
 
 void SequencerMapping::start()
-{
-    active = true;
+{	
 	refresh();
+    active = true;
 }
 
 void SequencerMapping::stop()
