@@ -35,6 +35,7 @@ class SnakePage : public Page
 	private:
 		void newSeed();
 		bool isColliding(Cell cell, bool headIncluded);
+		void endAnimation();
 
 		
 		

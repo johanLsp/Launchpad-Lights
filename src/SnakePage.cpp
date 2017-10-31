@@ -50,7 +50,6 @@ void SnakePage::refresh()
 		output->setLed(body[i].x, body[i].y, body[i].color);
 	}
 
-	std::cout << (int)seed.x << " , " << (int)seed.y << " : " << (int)seed.color.red << std::endl;
 	output->pulseLed(seed.x, seed.y, seed.color);
 }
 
@@ -79,6 +78,12 @@ bool SnakePage::noteOn(int note)
 // One iteration of the game loop
 void SnakePage::setCurrent(int index)
 {
+
+	if (gameOver)
+	{
+		endAnimation();
+		return;
+	}
 	output->setLed(body.back().x, body.back().y, 0);
 	int dx, dy;
 	switch(direction)
@@ -127,18 +132,17 @@ void SnakePage::setCurrent(int index)
 		gameOver = true;
 
 		output->setLed(body[0].x, body[0].y, Color::Red);
-		for(int i = body.size()-1; i >= 0; i--)
-		{
-			output->setLed(body[i].x, body[i].y, Color::Black);		
-			usleep(200000);	
-		}
-
-		for(int i = body.size(); i > 3; i--)		
-		{
-			body.pop_back();
-		}
-
 	}
+}
 
 
+void SnakePage::endAnimation()
+{
+	Cell lastCell = body.back();
+	if(lastCell.x != body[0].x || lastCell.y != body[0].y)
+		output->setLed(lastCell.x, lastCell.y, Color::Black);		
+	body.pop_back();
+	
+	if(body.size() == 3)
+		gameOver = false;
 }
