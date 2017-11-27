@@ -1,38 +1,37 @@
-#ifndef LAUNCHPAD_OUT_H
-#define LAUNCHPAD_OUT_H
+#ifndef INCLUDE_LAUNCHPADOUT_H_
+#define INCLUDE_LAUNCHPADOUT_H_
 
-#include "rtmidi/RtMidi.h"
+#include <cstdint>
 #include <functional>
+#include <string>
+#include <vector>
+#include "rtmidi/RtMidi.h"
 #include "Color.h"
 
-class LaunchpadOut
-{    
-	public:
-	    LaunchpadOut();
-	    ~LaunchpadOut();
-	        		
-		void setAllLed(int color);
-		void setLed(uint8_t x, uint8_t y, uint8_t color);
-		void setLed(uint8_t x, uint8_t y, Color color);
-		void setLed(uint8_t note, Color color);
-		void setLed(uint8_t note, uint8_t red, uint8_t green, uint8_t blue);
-		void setLed(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue);
-		void flashLed(int note, Color color);
+class LaunchpadOut {
+ public:
+    LaunchpadOut();
+    ~LaunchpadOut();
 
-		void pulseLed(int x, int y, Color color);
-		void pulseLed(int note, int color);
-		void scrollText(std::string text);
-		
-		
-		void beginTransaction();
-		void commitTransaction();
+    void setAllLed(int color);
+    void setLed(uint8_t x, uint8_t y, uint8_t color);
+    void setLed(uint8_t x, uint8_t y, Color color);
+    void setLed(uint8_t note, Color color);
+    void setLed(uint8_t note, uint8_t red, uint8_t green, uint8_t blue);
+    void setLed(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue);
+    void flashLed(int note, Color color);
 
+    void pulseLed(int x, int y, Color color);
+    void pulseLed(int note, int color);
+    void scrollText(std::string text);
 
-	
-	private:
-	    RtMidiOut *output;
-	    bool transactional = false;
-	    std::vector<unsigned char> message;
+    void beginTransaction();
+    void commitTransaction();
+
+ private:
+    RtMidiOut *output;
+    bool transactional = false;
+    std::vector<unsigned char> message;
 };
 
-#endif // LAUNCHPAD_OUT_H
+#endif  // INCLUDE_LAUNCHPADOUT_H_

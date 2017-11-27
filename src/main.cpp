@@ -1,21 +1,21 @@
-#include "SequencerMapping.h"
 #include "DirectMapping.h"
 #include "LaunchpadIn.h"
+#include "SequencerMapping.h"
 
-int main(int argc, char** argv)
-{
-	Stripe stripe;
-	LaunchpadIn input;
-	LaunchpadOut output;
 
-	DirectMapping direct(&output, &stripe);
-	SequencerMapping sequencer(&output, &stripe);
+int main(int argc, char** argv) {
+    Stripe stripe;
+    LaunchpadIn input;
+    LaunchpadOut output;
 
-	input.addMapping(&direct);
-	input.addMapping(&sequencer);
+    DirectMapping direct(&output, &stripe);
+    SequencerMapping sequencer(&output, &stripe);
 
-	stripe.setColor(127, 127, 127);
+    input.addMapping(&direct);
+    input.addMapping(&sequencer);
 
-	while(1);
-	output.setAllLed(0);
+    stripe.setColor(127, 127, 127);
+
+    while (1) {}
+    output.setAllLed(0);
 }

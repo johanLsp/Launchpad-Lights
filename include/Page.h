@@ -1,29 +1,24 @@
-#ifndef PAGE_H
-#define PAGE_H
+#ifndef INCLUDE_PAGE_H_
+#define INCLUDE_PAGE_H_
 #include "LaunchpadOut.h"
 
 #include <cmath>
 
 
-class Page
-{
-	public:
-		Page() {};
-		Page(LaunchpadOut* output);
-		virtual ~Page() = 0;
-		
-		virtual bool noteOn(int note) = 0;
-		virtual void refresh() = 0;
-		virtual void setCurrent(int index) = 0;
-		
-		void setCurrentColor(Color color);
+class Page {
+ public:
+    Page() {}
+    explicit Page(LaunchpadOut* output);
+    virtual ~Page() = 0;
+    virtual bool noteOn(int note) = 0;
+    virtual void refresh() = 0;
+    virtual void setCurrent(int index) = 0;
 
-		
-	protected:
-		LaunchpadOut* output;
-		Color currentColor;
-	
-	
+    void setCurrentColor(Color color);
+
+ protected:
+    LaunchpadOut* output;
+    Color currentColor;
 };
 
-#endif // PAGE_H
+#endif  // INCLUDE_PAGE_H_
