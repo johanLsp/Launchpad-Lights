@@ -6,7 +6,8 @@ namespace {
     constexpr int kBluePin  = 13;
 }
 
-Stripe::Stripe() {
+Stripe::Stripe()
+:m_intensity(1.0) {
     wiringPiSupport = true;
     FILE *cpuFd;
     char line[120];
@@ -40,12 +41,16 @@ Stripe::~Stripe() {
 void Stripe::setColor(uint8_t red, uint8_t green, uint8_t blue) {
     if (!wiringPiSupport) return;
 
-    softPwmWrite(kRedPin,   100.0 / 255 * red);
-    softPwmWrite(kGreenPin, 100.0 / 255 * green);
-    softPwmWrite(kBluePin,  100.0 / 255 * blue);
+    softPwmWrite(kRedPin,   m_intensity * 100.0 / 255 * red);
+    softPwmWrite(kGreenPin, m_intensity * 100.0 / 255 * green);
+    softPwmWrite(kBluePin,  m_intensity * 100.0 / 255 * blue);
 }
 
 
 void Stripe::setColor(Color color) {
     setColor(color.red, color.green, color.blue);
+}
+
+void Stripe::setIntensity(double intensity) {
+    m_intensity = intensity;
 }

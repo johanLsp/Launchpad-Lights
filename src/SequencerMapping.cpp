@@ -78,7 +78,14 @@ void SequencerMapping::noteOn(int channel, int note) {
     } else if (note == NOTE_SPEED_UP) {
         sequencerPage->speedUp();
         refresh();
-    } else if (note == NOTE_DUMMY2 || note == NOTE_DUMMY3) {
+    } else if (note == NOTE_LIGHT_INTENSITY) {
+        double intensity = stripe->getIntensity() + 0.25;
+        if (intensity > 1.0) intensity -= 1;
+        stripe->setIntensity(intensity);
+        output->setLed(NOTE_LIGHT_INTENSITY, Color(255 * intensity,
+                                                255 * intensity,
+                                                255 * intensity));
+    } else if (note == NOTE_DUMMY3) {
     } else if (note == NOTE_DECK) {
         sequencerPage->switchDeck();
         refresh();
@@ -153,6 +160,11 @@ void SequencerMapping::refresh() {
     currentPage->refresh();
     output->flashLed(NOTE_SPEED_DOWN, Color::Grey);
     output->flashLed(NOTE_SPEED_UP, Color::Grey);
+
+    double intensity = stripe->getIntensity();
+    output->setLed(NOTE_LIGHT_INTENSITY, Color(255 * intensity,
+                                            255 * intensity,
+                                            255 * intensity));
     output->setLed(NOTE_STROBE, Color::Grey);
     output->setLed(NOTE_DECK, sequencerPage->getDeck() ? Color(0, 255, 0).dim()
                                                        : Color(0, 0, 255).dim());
