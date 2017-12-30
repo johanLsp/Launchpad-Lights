@@ -10,7 +10,8 @@ set(SOURCE_FILES
 		Page.cpp
 		ColorPage.cpp
 		Color.cpp
-		SequencerPage.cpp)
+		SequencerPage.cpp
+		SnakePage.cpp)
 
 add_executable(lights ${SOURCE_FILES})
 
@@ -20,6 +21,3 @@ TARGET_LINK_LIBRARIES(lights ${CMAKE_THREAD_LIBS_INIT})
 TARGET_LINK_LIBRARIES(lights ${wiringPi_LIB})
 TARGET_LINK_LIBRARIES(lights -lcrypt -lrtmidi)
 target_link_libraries(lights Ableton::Link)
-
-
-

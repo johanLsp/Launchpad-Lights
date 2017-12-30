@@ -1,32 +1,36 @@
-#ifndef LAUNCHPAD_IN_H
-#define LAUNCHPAD_IN_H
+#ifndef INCLUDE_LAUNCHPADIN_H_
+#define INCLUDE_LAUNCHPADIN_H_
 
+#include <cstdint>
+#include <vector>
 #include "rtmidi/RtMidi.h"
 #include "Mapping.h"
-#include <cstdint>
 
-typedef void(* 	RtMidiCallback )(double timeStamp, std::vector< unsigned char > *message, void *userData);
+typedef void(*RtMidiCallback)(double timeStamp,
+                              std::vector< unsigned char > *message,
+                              void *userData);
 
 class LaunchpadIn {
+ public:
+    LaunchpadIn();
+    ~LaunchpadIn();
 
-	public:
-		LaunchpadIn();
-		~LaunchpadIn();
+    void addMapping(Mapping* mapping);
 
-		void addMapping(Mapping* mapping);
-		
-		void receive(double deltatime, std::vector<unsigned char> *message, void *userData);
+    void receive(double deltatime,
+                 std::vector<unsigned char> *message,
+                 void *userData);
 
-	private:	
-        void changeMapping();
-		
-	private:
-	    int currentMapping = 0;
-		std::vector<Mapping*> mappings;
-		RtMidiIn *input;
+ private:
+    void changeMapping();
+
+ private:
+    int currentMapping = 0;
+    std::vector<Mapping*> mappings;
+    RtMidiIn *input;
 
 
 };
 
 
-#endif //LAUNCHPAD_IN_H
+#endif  // INCLUDE_LAUNCHPADIN_H_

@@ -1,27 +1,25 @@
-#ifndef STRIPE_H
-#define STRIPE_H
+#ifndef INCLUDE_STRIPE_H_
+#define INCLUDE_STRIPE_H_
 
-#include "cstdint"
+#include <cstdint>
+#include <cstring>
+#include <iostream>
+
 #include <wiringPi.h>
 #include <softPwm.h>
-#include <iostream>
+
 #include "Color.h"
 
-class Stripe
-{
-	public:
-		Stripe();
-		~Stripe();
-		
-		void setColor(uint8_t red, uint8_t green, uint8_t blue);
-		void setColor(Color color);
+class Stripe {
+ public:
+    Stripe();
+    ~Stripe();
 
-	private:
-		bool wiringPiSupport;
+    void setColor(uint8_t red, uint8_t green, uint8_t blue);
+    void setColor(Color color);
 
-		int redPin = 0;
-        int greenPin = 9;
-        int bluePin = 13;
+ private:
+    bool wiringPiSupport;
 };
 
-#endif // STRIPE_H
+#endif  // INCLUDE_STRIPE_H_

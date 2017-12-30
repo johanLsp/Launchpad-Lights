@@ -1,17 +1,12 @@
 #include "Page.h"
 
-
 Page::Page(LaunchpadOut* output)
-:output(output)
-{
+:output(output) {
 }
 
-Page::~Page()
-{
+Page::~Page() {
 }
 
-
-void Page::setCurrentColor(Color color)
-{
-	this->currentColor = color;
+void Page::setCurrentColor(Color color) {
+    this->currentColor = color;
 }
