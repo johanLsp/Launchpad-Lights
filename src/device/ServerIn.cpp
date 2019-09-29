@@ -1,27 +1,33 @@
+// Copyright 2019 Johan Lasperas
 #include "device/ServerIn.h"
+
 #include <iostream>
+#include <vector>
+
+#include "Color.h"
+#include "json.hpp"
 
 using nlohmann::json;
 
-ServerIn::ServerIn() {
-    server = zsock_new_sub("tcp://localhost:7050", "Colors");
+ServerIn::ServerIn()
+    : m_running(false) {
+    m_server = zsock_new_sub("tcp://localhost:7050", "Colors");
 }
 
 void ServerIn::run() {
-    running = true;
-    while (running) {
+    m_running = true;
+    while (m_running) {
         receive();
         sleep(0.5);
     }
 }
 
 void ServerIn::stop() {
-    running = false;
+    m_running = false;
 }
 
 void ServerIn::receive() {
-    std::cout << "Receiving" << std::endl;
-    char *message = zstr_recv(server);
+    char *message = zstr_recv(m_server);
     std::cout << message << std::endl;
 
     std::vector<Color> colors;
@@ -31,25 +37,10 @@ void ServerIn::receive() {
       colors.push_back(color);
     }
 
-    mappings[currentMapping]->setColors(colors);
+    m_mappings[m_mapping_idx]->setColors(colors);
     zstr_free(&message);
 }
 
-void ServerIn::addMapping(Mapping* mapping) {
-    mappings.push_back(mapping);
-    if (mappings.size() == 1)
-        mappings[0]->start();
-}
-
-void ServerIn::changeMapping() {
-    mappings[currentMapping]->stop();
-    currentMapping++;
-    if (currentMapping >= mappings.size())
-        currentMapping = 0;
-
-    mappings[currentMapping]->start();
-}
-
 ServerIn::~ServerIn() {
-    zsock_destroy(&server);
+    zsock_destroy(&m_server);
 }

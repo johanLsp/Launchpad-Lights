@@ -1,22 +1,18 @@
-#ifndef INCLUDE_COLORPAGE_H_
-#define INCLUDE_COLORPAGE_H_
+// Copyright 2019 Johan Lasperas
+#ifndef SRC_MAPPING_PAGE_COLORPAGE_H_
+#define SRC_MAPPING_PAGE_COLORPAGE_H_
 
 #include "mapping/page/Page.h"
 
 class ColorPage : public Page {
  public:
-    explicit ColorPage(LaunchpadOut* output);
-    ~ColorPage();
+    void refresh() override;
+    bool noteOn(int note) override;
 
-    void refresh();
-    bool noteOn(int note);
-
-    // Getters
-    Color getColor() {return currentColor;}
+    Color getColor() { return m_color; }
 
  private:
-    LaunchpadOut* output;
-    Color currentColor;
+  Color m_color;
 };
 
-#endif  // INCLUDE_COLORPAGE_H_
+#endif  // SRC_MAPPING_PAGE_COLORPAGE_H_

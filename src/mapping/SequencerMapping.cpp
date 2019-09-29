@@ -1,134 +1,143 @@
+// Copyright 2019 Johan Lasperas
 #include "mapping/SequencerMapping.h"
 
+#include <cmath>
+
+#include <boost/bind.hpp>
+
 SequencerMapping::SequencerMapping(LaunchpadOut* output, Stripe* stripe)
-:output(output), stripe(stripe) {
-    sequencerPage = new SequencerPage(output);
-    snakePage = new SnakePage(output);
-    currentPage = sequencerPage;
+    : Mapping(output, stripe),
+      m_active(false),
+      m_bpm(120),
+      m_syncDelayms(1000),
+      m_tick(0),
+      m_running(true),
+      m_strobeOn(false),
+      m_strobeState(0) {
+  m_sequencerPage = new SequencerPage(output);
+  m_snakePage = new SnakePage(output);
+  m_currentPage = m_sequencerPage;
 
-    bpm = 120;
-    link = new ableton::Link(bpm);
-    link->setTempoCallback([this] (const double bpm) {
-            if (bpm < 180) {
-                this->setBPM(bpm);
-            }
-        });
+  m_bpm = 120;
+  m_link = new ableton::Link(m_bpm);
+  m_link->setTempoCallback([this] (const double bpm) {
+      if (bpm < 180) {
+        this->setBPM(bpm);
+      }
+    });
 
-    link->enable(true);
-
-    syncCounter = 0;
-    syncBegin = bclock::now();
-    syncEnd = bclock::now();
-
-    sequencerThread = std::thread(&SequencerMapping::run, this);
+  m_link->enable(true);
+  m_syncCounter = 0;
+  m_syncBegin = bclock::now();
+  m_syncEnd = bclock::now();
+  m_sequencerThread = std::thread(&SequencerMapping::run, this);
 }
 
+SequencerMapping::~SequencerMapping() {
+  m_running = false;
+  m_sequencerThread.join();
+  delete m_sequencerPage;
+  delete m_snakePage;
+  delete m_link;
+}
+
+
 void SequencerMapping::run() {
-    int previousIndex = -1;
+  int previousIndex = -1;
 
-    while (running) {
-        if (active) {
-            ableton::Link::Timeline timeline = link->captureAudioTimeline();
-            std::chrono::microseconds micros = link->clock().micros();
+  while (m_running) {
+    if (m_active) {
+      ableton::Link::Timeline timeline = m_link->captureAudioTimeline();
+      std::chrono::microseconds micros = m_link->clock().micros();
 
-            int colorQuantum = TICKS_PER_BEAT / sequencerPage->getSpeed();
+      int colorQuantum = TICKS_PER_BEAT / m_sequencerPage->getSpeed();
+      double beat = timeline.phaseAtTime(micros, colorQuantum);
+      int colorIndex = fmod(beat, colorQuantum) * 32 / colorQuantum;
 
-            double beat = timeline.phaseAtTime(micros, colorQuantum);
+      if (colorIndex != previousIndex) {
+        m_currentPage->setCurrent(colorIndex);
+        previousIndex = colorIndex;
+      }
 
-            int colorIndex = fmod(beat, colorQuantum) * 32 / colorQuantum;
-
-            if (colorIndex != previousIndex) {
-                currentPage->setCurrent(colorIndex);
-                previousIndex = colorIndex;
-            }
-
-            if (strobeOn) {
-                if (strobeState == 0) {
-                    stripe->setColor(Color::White);
-                } else if (strobeState == 3) {
-                    stripe->setColor(Color::Black);
-                }
-                strobeState++;
-                if (strobeState == 6) {
-                    strobeState = 0;
-                }
-            } else {
-                Color color = sequencerPage->getColor(colorIndex);
-                stripe->setColor(color);
-            }
-
-            usleep(10000);
-        } else {
-            usleep(100000);
+      if (m_strobeOn) {
+        if (m_strobeState == 0) {
+          m_stripe->setColor(Color::White);
+        } else if (m_strobeState == 3) {
+          m_stripe->setColor(Color::Black);
         }
+        m_strobeState++;
+        if (m_strobeState == 6) {
+          m_strobeState = 0;
+        }
+      } else {
+        Color color = m_sequencerPage->getColor(colorIndex);
+        m_stripe->setColor(color);
+      }
+      usleep(10000);
+    } else {
+      usleep(100000);
     }
+  }
 }
 
 void SequencerMapping::noteOn(int channel, int note) {
-    if (note == NOTE_PAGE) {
-        if (currentPage == sequencerPage) {
-            currentPage = snakePage;
-        } else {
-            currentPage = sequencerPage;
-        }
-        refresh();
-    } else if (note == NOTE_SPEED_DOWN) {
-        sequencerPage->speedDown();
-        refresh();
-    } else if (note == NOTE_SPEED_UP) {
-        sequencerPage->speedUp();
-        refresh();
-    } else if (note == NOTE_LIGHT_INTENSITY) {
-        double intensity = stripe->getIntensity() + 0.25;
-        if (intensity > 1.0) intensity -= 1;
-        stripe->setIntensity(intensity);
-        output->setLed(NOTE_LIGHT_INTENSITY, Color(255 * intensity,
-                                                255 * intensity,
-                                                255 * intensity));
-    } else if (note == NOTE_DUMMY3) {
-    } else if (note == NOTE_DECK) {
-        sequencerPage->switchDeck();
-        refresh();
-    } else if (note == NOTE_STROBE) {
-        strobeOn = true;
-        output->setLed(note, Color::White);
+  if (note == NOTE_PAGE) {
+    if (m_currentPage == m_sequencerPage) {
+      m_currentPage = m_snakePage;
     } else {
-        if (!currentPage->noteOn(note))
-            pageClosed();
+      m_currentPage = m_sequencerPage;
     }
+    refresh();
+  } else if (note == NOTE_SPEED_DOWN) {
+    m_sequencerPage->speedDown();
+    refresh();
+  } else if (note == NOTE_SPEED_UP) {
+    m_sequencerPage->speedUp();
+    refresh();
+  } else if (note == NOTE_LIGHT_INTENSITY) {
+    double intensity = m_stripe->getIntensity() + 0.25;
+    if (intensity > 1.0) intensity -= 1;
+    m_stripe->setIntensity(intensity);
+    m_output->setLed(NOTE_LIGHT_INTENSITY,
+                     Color(255 * intensity, 255 * intensity,  255 * intensity));
+  } else if (note == NOTE_DUMMY3) {
+  } else if (note == NOTE_DECK) {
+    m_sequencerPage->switchDeck();
+    refresh();
+  } else if (note == NOTE_STROBE) {
+    m_strobeOn = true;
+    m_output->setLed(note, Color::White);
+  } else {
+    if (!m_currentPage->noteOn(note))
+      pageClosed();
+  }
 }
 
 void SequencerMapping::noteOff(int channel, int note) {
-    if (note == NOTE_STROBE) {
-        strobeOn = false;
-        output->setLed(note, Color::Grey);
-    }
+  if (note == NOTE_STROBE) {
+    m_strobeOn = false;
+    m_output->setLed(note, Color::Grey);
+  }
 }
 
 
-void SequencerMapping::setColors(std::vector<Color>& colors) {
-    int size = colors.size();
-    
-    std::cout << (int)colors[0].red << ", " << (int)colors[0].green << ", " << (int)colors[0].blue << std::endl;
-    for (int i = 0; i < 8; i++) {
-        sequencerPage->setColor(0, 4*i, colors[i%size]);
-        sequencerPage->setColor(0, 4*i+1, colors[i%size]);
-        sequencerPage->setColor(0, 4*i+2, colors[i%size]);
-        sequencerPage->setColor(0, 4*i+3, colors[i%size]);
-    }
+void SequencerMapping::setColors(const std::vector<Color>& colors) {
+  int size = colors.size();
+  for (int i = 0; i < 8; i++) {
+    m_sequencerPage->setColor(0, 4*i, colors[i%size]);
+    m_sequencerPage->setColor(0, 4*i+1, colors[i%size]);
+    m_sequencerPage->setColor(0, 4*i+2, colors[i%size]);
+    m_sequencerPage->setColor(0, 4*i+3, colors[i%size]);
+  }
 }
 
 void SequencerMapping::start() {
-    refresh();
-    active = true;
+  refresh();
+  m_active = true;
 }
 
 void SequencerMapping::stop() {
-    active = false;
-}
-
-void SequencerMapping::setBPM(double bpm) {
-        this->bpm = bpm;
+  m_active = false;
 }
 
 /**
@@ -136,55 +145,49 @@ void SequencerMapping::setBPM(double bpm) {
  *  Currently not used, bu kept as is
  */
 void SequencerMapping::sync() {
-    int colorQuantum = TICKS_PER_BEAT/sequencerPage->getSpeed();
+  int colorQuantum = TICKS_PER_BEAT / m_sequencerPage->getSpeed();
 
-    btime syncCurrent = bclock::now();
-    bduration elapsed = syncCurrent - syncEnd;
+  btime syncCurrent = bclock::now();
+  bduration elapsed = syncCurrent - m_syncEnd;
 
-    // Sync hasn't been pressed in a while
-    if (elapsed.count() / 1000000 > syncDelayms) {
-        syncCounter = 0;
-        syncBegin = syncCurrent;
-    } else {
-        syncCounter++;
-    }
+  // Sync hasn't been pressed in a while
+  if (elapsed.count() / 1000000 > m_syncDelayms) {
+    m_syncCounter = 0;
+    m_syncBegin = syncCurrent;
+  } else {
+    m_syncCounter++;
+  }
 
-    syncEnd = syncCurrent;
+  m_syncEnd = syncCurrent;
 
-    // Update BPM
-    if (syncCounter > 3) {
-        elapsed = syncEnd - syncBegin;
-        bpm = 60*1e9/elapsed.count()*syncCounter;
-        std::cout << bpm << std::endl;
+  // Update BPM
+  if (m_syncCounter > 3) {
+    elapsed = m_syncEnd - m_syncBegin;
+    m_bpm = 60*1e9/elapsed.count()*m_syncCounter;
+    std::cout << m_bpm << std::endl;
 
-        ableton::Link::Timeline timeline = link->captureAudioTimeline();
-        timeline.setTempo(bpm, link->clock().micros());
-        link->commitAudioTimeline(timeline);
-    }
+    ableton::Link::Timeline timeline = m_link->captureAudioTimeline();
+    timeline.setTempo(m_bpm, m_link->clock().micros());
+    m_link->commitAudioTimeline(timeline);
+  }
 }
 
 void SequencerMapping::pageClosed() {
-    currentPage = sequencerPage;
-    refresh();
+  m_currentPage = m_sequencerPage;
+  refresh();
 }
-
 
 void SequencerMapping::refresh() {
-    currentPage->refresh();
-    output->flashLed(NOTE_SPEED_DOWN, Color::Grey);
-    output->flashLed(NOTE_SPEED_UP, Color::Grey);
+    m_currentPage->refresh();
+    m_output->flashLed(NOTE_SPEED_DOWN, Color::Grey);
+    m_output->flashLed(NOTE_SPEED_UP, Color::Grey);
 
-    double intensity = stripe->getIntensity();
-    output->setLed(NOTE_LIGHT_INTENSITY, Color(255 * intensity,
-                                            255 * intensity,
-                                            255 * intensity));
-    output->setLed(NOTE_STROBE, Color::Grey);
-    output->setLed(NOTE_DECK, sequencerPage->getDeck() ? Color(0, 255, 0).dim()
-                                                       : Color(0, 0, 255).dim());
-    output->pulseLed(NOTE_MAPPING, 5);
+    double intensity = m_stripe->getIntensity();
+    m_output->setLed(NOTE_LIGHT_INTENSITY,
+                     Color(255 * intensity, 255 * intensity, 255 * intensity));
+    m_output->setLed(NOTE_STROBE, Color::Grey);
+    m_output->setLed(NOTE_DECK, m_sequencerPage->getDeck() ? Color(0, 255, 0).dim()
+                                                           : Color(0, 0, 255).dim());
+    m_output->pulseLed(NOTE_MAPPING, 5);
 }
 
-SequencerMapping::~SequencerMapping() {
-    running = false;
-    sequencerThread.join();
-}

@@ -1,32 +1,22 @@
-#ifndef INCLUDE_SERVERIN_H_
-#define INCLUDE_SERVERIN_H_
+// Copyright 2019 Johan Lasperas
+#ifndef SRC_DEVICE_SERVERIN_H_
+#define SRC_DEVICE_SERVERIN_H_
 
-#include <cstdint>
-#include <vector>
 #include <czmq.h>
-#include "mapping/Mapping.h"
-#include "Color.h"
-#include "json.hpp"
+#include "device/DeviceIn.h"
 
-class ServerIn {
+class ServerIn : public DeviceIn {
  public:
     ServerIn();
     ~ServerIn();
 
-    void addMapping(Mapping* mapping);
     void receive();
     void run();
     void stop();
 
  private:
-    void changeMapping();
-
- private:
-    int currentMapping = 0;
-    bool running;
-    std::vector<Mapping*> mappings;
-    zsock_t* server;
+    bool m_running;
+    zsock_t* m_server;
 };
 
-
-#endif  // INCLUDE_SERVERIN_H_
+#endif  // SRC_DEVICE_SERVERIN_H_

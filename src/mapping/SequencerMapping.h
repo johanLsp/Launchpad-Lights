@@ -1,5 +1,6 @@
-#ifndef INCLUDE_SEQUENCERMAPPING_H_
-#define INCLUDE_SEQUENCERMAPPING_H_
+// Copyright 2019 Johan Lasperas
+#ifndef SRC_MAPPING_SEQUENCERMAPPING_H_
+#define SRC_MAPPING_SEQUENCERMAPPING_H_
 
 #define NOTE_PAGE 105
 #define NOTE_SPEED_DOWN 106
@@ -9,14 +10,11 @@
 #define NOTE_STROBE 110
 #define NOTE_DECK 111
 
-
-#include <cmath>
+#include <vector>
 #include <thread>
-
-#include "ableton/Link.hpp"
-#include <boost/bind.hpp>
 #include <boost/chrono.hpp>
 
+#include "ableton/Link.hpp"
 #include "mapping/Mapping.h"
 #include "mapping/page/SequencerPage.h"
 #include "mapping/page/SnakePage.h"
@@ -26,52 +24,46 @@ typedef boost::chrono::system_clock::time_point btime;
 typedef boost::chrono::system_clock::duration bduration;
 
 class SequencerMapping : public Mapping {
-enum Mode {SequencerMode, ColorMode};
+  enum Mode {SequencerMode, ColorMode};
 
  public:
-    SequencerMapping(LaunchpadOut* output, Stripe* stripe);
-    ~SequencerMapping();
+  SequencerMapping(LaunchpadOut* output, Stripe* stripe);
+  ~SequencerMapping();
 
-    void noteOn(int channel, int note);
-    void noteOff(int channel, int note);
-    void start();
-    void stop();
-    void setColors(std::vector<Color>& colors);
-
+  void noteOn(int channel, int note) override;
+  void noteOff(int channel, int note) override;
+  void start() override;
+  void stop() override;
+  void setColors(const std::vector<Color>& colors) override;
 
  private:
     void run();
     void sync();
-    void setBPM(double bpm);
+    void setBPM(double bpm) { m_bpm = bpm; }
     void pageClosed();
     void refresh();
 
-
- private:
-    LaunchpadOut* output;
-    Stripe * stripe;
-
     // Mapping pages
-    Page* currentPage;
-    SequencerPage* sequencerPage;
-    SnakePage* snakePage;
+    Page* m_currentPage;
+    SequencerPage* m_sequencerPage;
+    SnakePage* m_snakePage;
 
-    bool active = false;
+    bool m_active;
 
     // Sync variables
-    ableton::Link* link;
-    double bpm = 120;
-    int syncDelayms = 1000;
-    int syncCounter;
-    btime syncBegin;
-    btime syncEnd;
+    ableton::Link* m_link;
+    double m_bpm;
+    int m_syncDelayms;
+    int m_syncCounter;
+    btime m_syncBegin;
+    btime m_syncEnd;
 
-    int tick = 0;
+    int m_tick;
 
-    std::thread sequencerThread;
-    bool running = true;
-    bool strobeOn = false;
-    int strobeState = 0;
+    std::thread m_sequencerThread;
+    bool m_running;
+    bool m_strobeOn;
+    int m_strobeState;
 };
 
-#endif  // INCLUDE_SEQUENCERMAPPING_H_
+#endif  // SRC_MAPPING_SEQUENCERMAPPING_H_

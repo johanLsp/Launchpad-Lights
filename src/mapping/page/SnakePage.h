@@ -1,59 +1,47 @@
-#ifndef INCLUDE_SNAKEPAGE_H_
-#define INCLUDE_SNAKEPAGE_H_
+// Copyright 2019 Johan Lasperas
+#ifndef SRC_MAPPING_PAGE_SNAKEPAGE_H_
+#define SRC_MAPPING_PAGE_SNAKEPAGE_H_
 
-#include <unistd.h>
 
 #include <cstdlib>
-#include <ctime>
 #include <deque>
-#include <iostream>
-#include <sstream>
 
 #include "Color.h"
 #include "mapping/page/Page.h"
 
-struct Cell {
+class SnakePage : public Page {
+ private:
+  enum Direction {N, S, E, W};
+  struct Cell {
     uint8_t x;
     uint8_t y;
     Color color;
-    Cell()
-    :x(1), y(1), color(Color::White) {}
+    Cell() : x(1), y(1), color(Color::White) {}
     Cell(uint8_t x, uint8_t y, Color color)
-    :x(x), y(y), color(color) {}
-};
-
-class SnakePage : public Page {
-enum Direction {N, S, E, W};
+        : x(x), y(y), color(color) {}
+  };
 
  public:
     explicit SnakePage(LaunchpadOut* output);
-    ~SnakePage();
 
-    void refresh();
-    bool noteOn(int note);
-    void setCurrent(int index);
-
-
+    void refresh() override;
+    bool noteOn(int note) override;
+    void setCurrent(int index) override;
 
  private:
     void newSeed();
     bool isColliding(Cell cell, bool headIncluded);
     void endAnimation();
 
+    static void moveCell(Cell& cell, Direction direction);
 
-
- private:
-    LaunchpadOut* output;
-
-    std::deque<Cell> body;
-    Direction direction;
-    Cell seed;
-    int score = 0;
-    bool gameOver = false;
-    int gameOverTimer;
-    bool powerUp = false;
-    int powerUpTimer;
-
-
+    std::deque<Cell> m_body;
+    Direction m_direction;
+    Cell m_seed;
+    int m_score = 0;
+    bool m_gameOver = false;
+    int m_gameOverTimer;
+    bool m_powerUp = false;
+    int m_powerUpTimer;
 };
-#endif  // INCLUDE_SNAKEPAGE_H_
+#endif  // SRC_MAPPING_PAGE_SNAKEPAGE_H_

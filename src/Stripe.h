@@ -1,5 +1,6 @@
-#ifndef INCLUDE_STRIPE_H_
-#define INCLUDE_STRIPE_H_
+// Copyright 2019 Johan Lasperas
+#ifndef SRC_STRIPE_H_
+#define SRC_STRIPE_H_
 
 #include <cstdint>
 #include <cstring>
@@ -12,17 +13,16 @@
 
 class Stripe {
  public:
-    Stripe();
-    ~Stripe();
+  Stripe();
 
-    void setColor(uint8_t red, uint8_t green, uint8_t blue);
-    void setColor(Color color);
-    double getIntensity() { return m_intensity;}
-    void setIntensity(double intensity);
+  void setColor(uint8_t red, uint8_t green, uint8_t blue);
+  void setColor(Color color);
+  double getIntensity() { return m_intensity;}
+  void setIntensity(double intensity);
 
  private:
-    bool wiringPiSupport;
-    double m_intensity;
+  bool m_wiringPiSupport;
+  double m_intensity;
 };
 
-#endif  // INCLUDE_STRIPE_H_
+#endif  // SRC_STRIPE_H_

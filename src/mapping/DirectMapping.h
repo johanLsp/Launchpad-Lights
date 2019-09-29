@@ -1,25 +1,20 @@
-#ifndef INCLUDE_DIRECTMAPPING_H_
-#define INCLUDE_DIRECTMAPPING_H_
+// Copyright 2019 Johan Lasperas
+#ifndef SRC_MAPPING_DIRECTMAPPING_H_
+#define SRC_MAPPING_DIRECTMAPPING_H_
 
 #include "mapping/Mapping.h"
-#include <functional>
-#include <cmath>
 
 class DirectMapping : public Mapping {
  public:
-    DirectMapping(LaunchpadOut* output, Stripe* stripe);
-    ~DirectMapping();
-
-    void noteOn(int channel, int note);
-    void noteOff(int channel, int note);
-    void setColors(std::vector<Color>& colors) {}
-    void start();
-    void stop();
+  DirectMapping(LaunchpadOut* output, Stripe* stripe);
+  void noteOn(int channel, int note) override;
+  void noteOff(int channel, int note) override;
+  void setColors(const std::vector<Color>& colors) override {}
+  void start() override;
+  void stop() override;
 
  private:
-    LaunchpadOut* output;
-    Stripe* stripe;
-    int num_pressed = 0;
+    int m_num_pressed;
 };
 
-#endif  // INCLUDE_DIRECTMAPPING_H_
+#endif  // SRC_MAPPING_DIRECTMAPPING_H_

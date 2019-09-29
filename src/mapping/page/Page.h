@@ -1,24 +1,18 @@
-#ifndef INCLUDE_PAGE_H_
-#define INCLUDE_PAGE_H_
+// Copyright 2019 Johan Lasperas
+#ifndef SRC_MAPPING_PAGE_PAGE_H
+#define SRC_MAPPING_PAGE_PAGE_H
+
 #include "device/LaunchpadOut.h"
-
-#include <cmath>
-
 
 class Page {
  public:
-    Page() {}
-    explicit Page(LaunchpadOut* output);
-    virtual ~Page() = 0;
-    virtual bool noteOn(int note) = 0;
-    virtual void refresh() = 0;
-    virtual void setCurrent(int index) = 0;
-
-    void setCurrentColor(Color color);
+  explicit Page(LaunchpadOut* output) : m_output(output) {}
+  virtual bool noteOn(int note) = 0;
+  virtual void refresh() = 0;
+  virtual void setCurrent(int index) = 0;
 
  protected:
-    LaunchpadOut* output;
-    Color currentColor;
+  LaunchpadOut* m_output;
 };
 
-#endif  // INCLUDE_PAGE_H_
+#endif  // SRC_MAPPING_PAGE_PAGE_H

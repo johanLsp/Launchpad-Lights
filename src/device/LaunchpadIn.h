@@ -1,37 +1,25 @@
-#ifndef INCLUDE_LAUNCHPADIN_H_
-#define INCLUDE_LAUNCHPADIN_H_
+// Copyright 2019 Johan Lasperas
+#ifndef SRC_DEVICE_LAUNCHPADIN_H_
+#define SRC_DEVICE_LAUNCHPADIN_H_
 
 #include <cstdint>
 #include <vector>
 #include "rtmidi/RtMidi.h"
+
+#include "device/DeviceIn.h"
 #include "mapping/Mapping.h"
 
-typedef void(*RtMidiCallback)(double timeStamp,
-                              std::vector< unsigned char > *message,
-                              void *userData);
-
-class LaunchpadIn {
+class LaunchpadIn : public DeviceIn {
  public:
-    LaunchpadIn();
-    ~LaunchpadIn();
+  LaunchpadIn();
+  ~LaunchpadIn();
 
-    void addMapping(Mapping* mapping);
-
-    void receive(double deltatime,
-                 std::vector<unsigned char> *message,
-                 void *userData);
-
-    bool isConnected() {return connected;}
+  void receive(std::vector<unsigned char> *message);
+  bool isConnected() { return m_connected; }
 
  private:
-    void changeMapping();
-
- private:
-    int currentMapping = 0;
-    std::vector<Mapping*> mappings;
-    RtMidiIn *input;
-    bool connected;
+  RtMidiIn *m_input;
+  bool m_connected;
 };
 
-
-#endif  // INCLUDE_LAUNCHPADIN_H_
+#endif  // SRC_DEVICE_LAUNCHPADIN_H_
