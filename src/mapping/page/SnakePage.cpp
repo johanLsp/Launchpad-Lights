@@ -1,4 +1,4 @@
-#include "SnakePage.h"
+#include "mapping/page/SnakePage.h"
 
 SnakePage::SnakePage(LaunchpadOut* output)
 :output(output) {

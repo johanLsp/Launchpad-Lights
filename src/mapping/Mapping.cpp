@@ -1,4 +1,4 @@
-#include "Mapping.h"
+#include "mapping/Mapping.h"
 
 Mapping::Mapping() {
 }

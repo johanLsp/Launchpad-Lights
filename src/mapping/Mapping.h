@@ -1,7 +1,7 @@
 #ifndef INCLUDE_MAPPING_H_
 #define INCLUDE_MAPPING_H_
 
-#include "LaunchpadOut.h"
+#include "device/LaunchpadOut.h"
 #include "Stripe.h"
 
 #define NOTE_MAPPING 104

@@ -1,4 +1,4 @@
-#include "DirectMapping.h"
+#include "mapping/DirectMapping.h"
 
 DirectMapping::DirectMapping(LaunchpadOut* output, Stripe* stripe)
 :output(output), stripe(stripe) {

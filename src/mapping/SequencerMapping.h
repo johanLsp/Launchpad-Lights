@@ -17,9 +17,9 @@
 #include <boost/bind.hpp>
 #include <boost/chrono.hpp>
 
-#include "Mapping.h"
-#include "SequencerPage.h"
-#include "SnakePage.h"
+#include "mapping/Mapping.h"
+#include "mapping/page/SequencerPage.h"
+#include "mapping/page/SnakePage.h"
 
 typedef boost::chrono::system_clock bclock;
 typedef boost::chrono::system_clock::time_point btime;

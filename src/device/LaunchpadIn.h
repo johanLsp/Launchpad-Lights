@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include "rtmidi/RtMidi.h"
-#include "Mapping.h"
+#include "mapping/Mapping.h"
 
 typedef void(*RtMidiCallback)(double timeStamp,
                               std::vector< unsigned char > *message,

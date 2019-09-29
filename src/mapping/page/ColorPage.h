@@ -1,7 +1,7 @@
 #ifndef INCLUDE_COLORPAGE_H_
 #define INCLUDE_COLORPAGE_H_
 
-#include "Page.h"
+#include "mapping/page/Page.h"
 
 class ColorPage : public Page {
  public:

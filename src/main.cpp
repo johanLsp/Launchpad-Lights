@@ -1,8 +1,8 @@
-#include "DirectMapping.h"
-#include "LaunchpadIn.h"
-#include "ServerIn.h"
-#include "SequencerMapping.h"
 #include <csignal>
+#include "device/LaunchpadIn.h"
+#include "device/ServerIn.h"
+#include "mapping/DirectMapping.h"
+#include "mapping/SequencerMapping.h"
 
 bool done = false;
 void signalHandler(int signum) {

@@ -1,4 +1,4 @@
-#include "LaunchpadOut.h"
+#include "device/LaunchpadOut.h"
 
 LaunchpadOut::LaunchpadOut() {
     output = new RtMidiOut();

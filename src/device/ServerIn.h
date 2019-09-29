@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include <czmq.h>
-#include "Mapping.h"
+#include "mapping/Mapping.h"
 #include "Color.h"
 #include "json.hpp"
 

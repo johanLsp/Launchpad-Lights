@@ -1,7 +1,7 @@
 #ifndef INCLUDE_DIRECTMAPPING_H_
 #define INCLUDE_DIRECTMAPPING_H_
 
-#include "Mapping.h"
+#include "mapping/Mapping.h"
 #include <functional>
 #include <cmath>
 

@@ -1,4 +1,4 @@
-#include "ColorPage.h"
+#include "mapping/page/ColorPage.h"
 
 ColorPage::ColorPage(LaunchpadOut* output)
 :output(output) {

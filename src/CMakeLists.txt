@@ -1,18 +1,18 @@
 
 set(SOURCE_FILES 
-		main.cpp
-		LaunchpadOut.cpp
-		LaunchpadIn.cpp
-        ServerIn.cpp
-		Stripe.cpp
-		Mapping.cpp
-		DirectMapping.cpp
-		SequencerMapping.cpp
-		Page.cpp
-		ColorPage.cpp
-		Color.cpp
-		SequencerPage.cpp
-		SnakePage.cpp)
+    main.cpp
+    Color.cpp
+    Stripe.cpp
+		device/LaunchpadIn.cpp
+		device/LaunchpadOut.cpp
+    device/ServerIn.cpp
+		mapping/Mapping.cpp
+		mapping/DirectMapping.cpp
+		mapping/SequencerMapping.cpp
+		mapping/page/Page.cpp
+		mapping/page/ColorPage.cpp
+		mapping/page/SequencerPage.cpp
+		mapping/page/SnakePage.cpp)
 
 add_executable(lights ${SOURCE_FILES})
 

@@ -18,7 +18,7 @@ include_directories(${CZMQ_INCLUDE_DIRS})
 
 include(lib/AbletonLink/AbletonLinkConfig.cmake)
 
-include_directories(include)
+include_directories(src)
 include_directories(lib/json)
 add_subdirectory(src)
 

@@ -10,7 +10,7 @@
 #include <sstream>
 
 #include "Color.h"
-#include "Page.h"
+#include "mapping/page/Page.h"
 
 struct Cell {
     uint8_t x;

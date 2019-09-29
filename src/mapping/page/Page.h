@@ -1,6 +1,6 @@
 #ifndef INCLUDE_PAGE_H_
 #define INCLUDE_PAGE_H_
-#include "LaunchpadOut.h"
+#include "device/LaunchpadOut.h"
 
 #include <cmath>
 

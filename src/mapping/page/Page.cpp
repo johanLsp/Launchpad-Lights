@@ -1,4 +1,4 @@
-#include "Page.h"
+#include "mapping/page/Page.h"
 
 Page::Page(LaunchpadOut* output)
 :output(output) {

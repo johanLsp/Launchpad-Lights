@@ -1,4 +1,4 @@
-#include "SequencerMapping.h"
+#include "mapping/SequencerMapping.h"
 
 SequencerMapping::SequencerMapping(LaunchpadOut* output, Stripe* stripe)
 :output(output), stripe(stripe) {

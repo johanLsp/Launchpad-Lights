@@ -1,4 +1,4 @@
-#include "LaunchpadIn.h"
+#include "device/LaunchpadIn.h"
 
 void recv_bind(double                      deltatime,
                std::vector<unsigned char>* message,

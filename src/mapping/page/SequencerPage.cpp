@@ -1,4 +1,4 @@
-#include "SequencerPage.h"
+#include "mapping/page/SequencerPage.h"
 
 SequencerPage::SequencerPage(LaunchpadOut* output)
 :output(output) {
