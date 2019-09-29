@@ -105,6 +105,19 @@ void SequencerMapping::noteOff(int channel, int note) {
     }
 }
 
+
+void SequencerMapping::setColors(std::vector<Color>& colors) {
+    int size = colors.size();
+    
+    std::cout << (int)colors[0].red << ", " << (int)colors[0].green << ", " << (int)colors[0].blue << std::endl;
+    for (int i = 0; i < 8; i++) {
+        sequencerPage->setColor(0, 4*i, colors[i%size]);
+        sequencerPage->setColor(0, 4*i+1, colors[i%size]);
+        sequencerPage->setColor(0, 4*i+2, colors[i%size]);
+        sequencerPage->setColor(0, 4*i+3, colors[i%size]);
+    }
+}
+
 void SequencerMapping::start() {
     refresh();
     active = true;

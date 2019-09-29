@@ -14,6 +14,7 @@ class Mapping {
 
     virtual void noteOn(int channel, int note) = 0;
     virtual void noteOff(int channel, int note) = 0;
+    virtual void setColors(std::vector<Color>& colors) = 0;
 
     virtual void start() = 0;
     virtual void stop() = 0;

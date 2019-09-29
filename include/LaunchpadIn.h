@@ -21,6 +21,8 @@ class LaunchpadIn {
                  std::vector<unsigned char> *message,
                  void *userData);
 
+    bool isConnected() {return connected;}
+
  private:
     void changeMapping();
 
@@ -28,8 +30,7 @@ class LaunchpadIn {
     int currentMapping = 0;
     std::vector<Mapping*> mappings;
     RtMidiIn *input;
-
-
+    bool connected;
 };
 
 

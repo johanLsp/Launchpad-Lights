@@ -36,6 +36,7 @@ enum Mode {SequencerMode, ColorMode};
     void noteOff(int channel, int note);
     void start();
     void stop();
+    void setColors(std::vector<Color>& colors);
 
 
  private:

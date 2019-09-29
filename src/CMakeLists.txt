@@ -3,6 +3,7 @@ set(SOURCE_FILES
 		main.cpp
 		LaunchpadOut.cpp
 		LaunchpadIn.cpp
+        ServerIn.cpp
 		Stripe.cpp
 		Mapping.cpp
 		DirectMapping.cpp
@@ -21,3 +22,4 @@ TARGET_LINK_LIBRARIES(lights ${CMAKE_THREAD_LIBS_INIT})
 TARGET_LINK_LIBRARIES(lights ${wiringPi_LIB})
 TARGET_LINK_LIBRARIES(lights -lcrypt -lrtmidi)
 target_link_libraries(lights Ableton::Link)
+target_link_libraries(lights czmq)

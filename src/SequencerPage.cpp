@@ -60,6 +60,10 @@ void SequencerPage::setColor(int deck, int index) {
     }
 }
 
+void SequencerPage::setColor(int deck, int index, Color color) {
+    colors[deck][index] = color;
+}
+
 void SequencerPage::setCurrent(int index) {
     int previous = (index == 0 ? 31 : index-1);
 

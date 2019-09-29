@@ -12,6 +12,7 @@ class DirectMapping : public Mapping {
 
     void noteOn(int channel, int note);
     void noteOff(int channel, int note);
+    void setColors(std::vector<Color>& colors) {}
     void start();
     void stop();
 

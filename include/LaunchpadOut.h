@@ -28,9 +28,12 @@ class LaunchpadOut {
     void beginTransaction();
     void commitTransaction();
 
+    bool isConnected() {return connected;}
+
  private:
     RtMidiOut *output;
     bool transactional = false;
+    bool connected;
     std::vector<unsigned char> message;
 };
 

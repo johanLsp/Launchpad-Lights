@@ -11,6 +11,7 @@ void recv_bind(double                      deltatime,
 
 LaunchpadIn::LaunchpadIn() {
     input = new RtMidiIn();
+    connected = false;
 
     // Check available ports.
     unsigned int nPorts = input->getPortCount();
@@ -18,6 +19,7 @@ LaunchpadIn::LaunchpadIn() {
     for (int i = 0; i < nPorts; i++) {
         std::string name = input->getPortName(i);
         if (name.compare(0, 9, "Launchpad") == 0) {
+            connected = true;
             input->openPort(i);
             input->setCallback(&recv_bind, this);
         }
@@ -29,7 +31,6 @@ void LaunchpadIn::addMapping(Mapping* mapping) {
     if (mappings.size() == 1)
         mappings[0]->start();
 }
-
 
 void LaunchpadIn::receive(double                      deltatime,
                           std::vector<unsigned char>* message,

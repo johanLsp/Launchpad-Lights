@@ -2,11 +2,13 @@
 
 LaunchpadOut::LaunchpadOut() {
     output = new RtMidiOut();
+    connected = false;
     unsigned int nPorts = output->getPortCount();
 
     for (int i = 0; i < nPorts; i++) {
         std::string name = output->getPortName(i);
         if (name.compare(0, 9, "Launchpad") == 0) {
+            connected = true;
             std::cout << "Output : " << name << std::endl;
             output->openPort(i);
         }
@@ -33,7 +35,7 @@ void LaunchpadOut::setLed(uint8_t note, uint8_t red, uint8_t green, uint8_t blue
     message.push_back(green * 63.0 / 255);
     message.push_back(blue  * 63.0 / 255);
 
-    if (!transactional) {
+    if (!transactional && isConnected()) {
         message.push_back(247);
         output->sendMessage(&message);
     }
@@ -47,8 +49,9 @@ void LaunchpadOut::setLed(uint8_t x, uint8_t y, uint8_t color) {
     message.push_back(144);
     message.push_back(10 * y + x);
     message.push_back(color);
-
-    output->sendMessage(&message);
+    if (isConnected()) {
+        output->sendMessage(&message);
+    }
 }
 
 void LaunchpadOut::setLed(uint8_t x,
@@ -82,8 +85,9 @@ void LaunchpadOut::setAllLed(int color) {
     message.push_back(14);
     message.push_back(color);
     message.push_back(247);
-
-    output->sendMessage(&message);
+    if (isConnected()) {
+        output->sendMessage(&message);
+    }
 }
 
 void LaunchpadOut::flashLed(int note, Color color) {
@@ -99,7 +103,9 @@ void LaunchpadOut::flashLed(int note, Color color) {
     message.push_back(channel);
     message.push_back(note);
     message.push_back(0);
-    output->sendMessage(&message);
+    if (isConnected()) {
+        output->sendMessage(&message);
+    }
 }
 
 void LaunchpadOut::pulseLed(int x, int y, Color color) {
@@ -125,7 +131,9 @@ void LaunchpadOut::pulseLed(int note, int color) {
     message.push_back(channel);
     message.push_back(note);
     message.push_back(color);
-    output->sendMessage(&message);
+    if (isConnected()) {
+        output->sendMessage(&message);
+    }
 }
 
 void LaunchpadOut::beginTransaction() {
@@ -144,8 +152,9 @@ void LaunchpadOut::beginTransaction() {
 
 void LaunchpadOut::commitTransaction() {
     message.push_back(247);
-    output->sendMessage(&message);
-
+    if (isConnected()) {
+        output->sendMessage(&message);
+    }
     transactional = false;
 }
 
@@ -168,7 +177,9 @@ void LaunchpadOut::scrollText(std::string text) {
     }
 
     message.push_back(247);
-    output->sendMessage(&message);
+    if (isConnected()) {
+        output->sendMessage(&message);
+    }
 }
 
 LaunchpadOut::~LaunchpadOut() {

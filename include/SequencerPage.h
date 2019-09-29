@@ -15,7 +15,8 @@ class SequencerPage : public Page {
     void refresh();
     bool noteOn(int note);
 
-    void setColor(int channel, int position);
+    void setColor(int deck, int index);
+    void setColor(int deck, int index, Color color);
     void speedUp();
     void speedDown();
     void switchDeck();
@@ -37,7 +38,7 @@ class SequencerPage : public Page {
  private:
     LaunchpadOut* output;
     Color colors[2][32];
-    int speed = 1;
+    int speed = 2;
     int currentDeck = 0;
 
     int currentColorIdx = 0;
