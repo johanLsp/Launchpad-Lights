@@ -1,6 +1,6 @@
 // Copyright 2019 Johan Lasperas
-#ifndef SRC_COLOR_H_
-#define SRC_COLOR_H_
+#ifndef SRC_UTIL_COLOR_H_
+#define SRC_UTIL_COLOR_H_
 
 #include <cstdint>
 
@@ -35,4 +35,4 @@ class Color {
   static const Color Grey;
 };
 
-#endif  // SRC_COLOR_H_
+#endif  // SRC_UTIL_COLOR_H_

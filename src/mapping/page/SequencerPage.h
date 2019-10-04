@@ -4,8 +4,8 @@
 
 #define TICKS_PER_BEAT 16
 
-#include "Color.h"
 #include "mapping/page/Page.h"
+#include "util/Color.h"
 
 class SequencerPage : public Page {
  public:

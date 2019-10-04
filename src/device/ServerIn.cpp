@@ -4,8 +4,8 @@
 #include <iostream>
 #include <vector>
 
-#include "Color.h"
 #include "json.hpp"
+#include "util/Color.h"
 
 using nlohmann::json;
 

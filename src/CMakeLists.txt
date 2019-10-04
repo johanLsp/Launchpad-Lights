@@ -1,7 +1,6 @@
 
 set(SOURCE_FILES 
     main.cpp
-    Color.cpp
     Stripe.cpp
     device/LaunchpadOut.cpp
     device/LaunchpadIn.cpp
@@ -10,7 +9,8 @@ set(SOURCE_FILES
     mapping/SequencerMapping.cpp
     mapping/page/ColorPage.cpp
     mapping/page/SequencerPage.cpp
-    mapping/page/SnakePage.cpp)
+    mapping/page/SnakePage.cpp
+    util/Color.cpp)
 
 add_executable(lights ${SOURCE_FILES})
 

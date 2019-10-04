@@ -1,4 +1,4 @@
-#include "Color.h"
+#include "util/Color.h"
 
 const Color Color::Black   = Color(0,   0,   0);
 const Color Color::Red     = Color(255, 0,   0);

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include "rtmidi/RtMidi.h"
-#include "Color.h"
+#include "util/Color.h"
 #include "util/UString.h"
 
 class LaunchpadOut {

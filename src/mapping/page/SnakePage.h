@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <deque>
 
-#include "Color.h"
 #include "mapping/page/Page.h"
+#include "util/Color.h"
 
 class SnakePage : public Page {
  private:

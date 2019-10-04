@@ -1,8 +1,6 @@
 // Copyright 2019 Johan Lasperas
 #include "device/LaunchpadIn.h"
 
-#include <string>
-
 void recv_bind(double timestamp, std::vector<unsigned char>* message,
                void* userData) {
   LaunchpadIn* launchpad = reinterpret_cast<LaunchpadIn*>(userData);

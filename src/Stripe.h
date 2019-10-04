@@ -9,7 +9,7 @@
 #include <wiringPi.h>
 #include <softPwm.h>
 
-#include "Color.h"
+#include "util/Color.h"
 
 class Stripe {
  public:
