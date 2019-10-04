@@ -4,11 +4,11 @@
 #include <functional>
 #include <cmath>
 
-DirectMapping::DirectMapping(LaunchpadOut* output, Stripe* stripe)
-    : Mapping(output, stripe), m_num_pressed(0) {}
+DirectMapping::DirectMapping(Launchpad* launchpad, Stripe* stripe)
+    : Mapping(launchpad, stripe), m_num_pressed(0) {}
 
 void DirectMapping::start() {
-  m_output->setAllLed(0);
+  m_launchpad->setAllLed(0);
   for (uint8_t r = 0; r < 4; r++) {
     for (uint8_t g = 0; g < 4; g++) {
       for (uint8_t b = 0; b < 4; b++) {
@@ -17,17 +17,17 @@ void DirectMapping::start() {
         uint8_t red = 255.0 * r / 3;
         uint8_t green = 255.0 * g / 3;
         uint8_t blue = 255.0 * b / 3;
-        m_output->setLed(x, y, red, green, blue);
+        m_launchpad->setLed(x, y, red, green, blue);
       }
     }
   }
-  m_output->pulseLed(NOTE_MAPPING, 5);
+  m_launchpad->pulseLed(NOTE_MAPPING, 5);
   m_num_pressed = 0;
 }
 
 void DirectMapping::stop() {
   m_num_pressed = 0;
-  m_output->setAllLed(0);
+  m_launchpad->setAllLed(0);
 }
 
 void DirectMapping::noteOn(int channel, int note) {

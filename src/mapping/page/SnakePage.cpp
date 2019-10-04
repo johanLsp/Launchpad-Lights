@@ -5,8 +5,8 @@
 #include <ctime>
 #include <sstream>
 
-SnakePage::SnakePage(LaunchpadOut* output)
-    : Page(output), m_score(0), m_gameOver(false), m_powerUp(false) {
+SnakePage::SnakePage(Launchpad* launchpad)
+    : Page(launchpad), m_score(0), m_gameOver(false), m_powerUp(false) {
   std::srand(std::time(0));
   m_body.push_back(Cell(6, 5, Color::Yellow));
   m_body.push_back(Cell(6, 4, Color::Green));
@@ -39,11 +39,11 @@ bool SnakePage::isColliding(Cell cell, bool headIncluded) {
 }
 
 void SnakePage::refresh() {
-  m_output->setAllLed(0);
+  m_launchpad->setAllLed(0);
   for (int i = 0; i < m_body.size(); i++) {
-    m_output->setLed(m_body[i].x, m_body[i].y, m_body[i].color);
+    m_launchpad->setLed(m_body[i].x, m_body[i].y, m_body[i].color);
   }
-  m_output->pulseLed(m_seed.x, m_seed.y, m_seed.color);
+  m_launchpad->pulseLed(m_seed.x, m_seed.y, m_seed.color);
 }
 
 bool SnakePage::noteOn(int note) {
@@ -84,15 +84,15 @@ void SnakePage::setCurrent(int index) {
   }
 
   Cell lastCell = m_body.back();
-  m_output->setLed(lastCell.x, lastCell.y, 0);
+  m_launchpad->setLed(lastCell.x, lastCell.y, 0);
 
   for (int i = m_body.size()-1; i > 0; i--) {
     m_body[i].x = m_body[i-1].x;
     m_body[i].y = m_body[i-1].y;
-    m_output->setLed(m_body[i].x, m_body[i].y, m_body[i].color);
+    m_launchpad->setLed(m_body[i].x, m_body[i].y, m_body[i].color);
   }
   moveCell(m_body[0], m_direction);
-  m_output->setLed(m_body[0].x, m_body[0].y, m_body[0].color);
+  m_launchpad->setLed(m_body[0].x, m_body[0].y, m_body[0].color);
 
   if (m_body[0].x == m_seed.x && m_body[0].y == m_seed.y) {
     if (m_seed.color == Color::Blue) {
@@ -106,7 +106,7 @@ void SnakePage::setCurrent(int index) {
     }
     m_score++;
     newSeed();
-    m_output->pulseLed(m_seed.x, m_seed.y, m_seed.color);
+    m_launchpad->pulseLed(m_seed.x, m_seed.y, m_seed.color);
   }
   if (isColliding(m_body[0], false)) {
     if (m_powerUp) {
@@ -121,7 +121,7 @@ void SnakePage::setCurrent(int index) {
     } else {
       m_gameOver = true;
       m_gameOverTimer = 20;
-      m_output->setLed(m_body[0].x, m_body[0].y, Color::Red);
+      m_launchpad->setLed(m_body[0].x, m_body[0].y, Color::Red);
     }
   }
 }
@@ -130,14 +130,14 @@ void SnakePage::endAnimation() {
   if (m_body.size() > 3) {
     Cell lastCell = m_body.back();
     if (lastCell.x != m_body[0].x || lastCell.y != m_body[0].y) {
-        m_output->setLed(lastCell.x, lastCell.y, Color::Black);
+        m_launchpad->setLed(lastCell.x, lastCell.y, Color::Black);
     }
     m_body.pop_back();
     m_gameOverTimer = 21;
   } else if (m_gameOverTimer == 20) {
     std::stringstream gameoverStr;
     gameoverStr << m_score;
-    m_output->scrollText(gameoverStr.str());
+    m_launchpad->scrollText(gameoverStr.str());
   } else if (m_gameOverTimer == 0) {
     refresh();
     m_gameOver = false;

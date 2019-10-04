@@ -9,7 +9,7 @@
 
 class SequencerPage : public Page {
  public:
-  explicit SequencerPage(LaunchpadOut* output);
+  explicit SequencerPage(Launchpad* launchpad);
 
   void refresh() override;
   bool noteOn(int note) override;

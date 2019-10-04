@@ -6,7 +6,7 @@
 
 class DirectMapping : public Mapping {
  public:
-  DirectMapping(LaunchpadOut* output, Stripe* stripe);
+  DirectMapping(Launchpad* launchpad, Stripe* stripe);
   void noteOn(int channel, int note) override;
   void noteOff(int channel, int note) override;
   void setColors(const std::vector<Color>& colors) override {}

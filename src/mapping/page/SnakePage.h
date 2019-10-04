@@ -22,7 +22,7 @@ class SnakePage : public Page {
   };
 
  public:
-    explicit SnakePage(LaunchpadOut* output);
+    explicit SnakePage(Launchpad* launchpad);
 
     void refresh() override;
     bool noteOn(int note) override;

@@ -1,5 +1,5 @@
 // Copyright 2019 Johan Lasperas
-#include "device/ServerIn.h"
+#include "device/Server.h"
 
 #include <iostream>
 #include <vector>
@@ -9,12 +9,12 @@
 
 using nlohmann::json;
 
-ServerIn::ServerIn()
+Server::Server()
     : m_running(false) {
     m_server = zsock_new_sub("tcp://localhost:7050", "Colors");
 }
 
-void ServerIn::run() {
+void Server::run() {
     m_running = true;
     while (m_running) {
         receive();
@@ -22,11 +22,11 @@ void ServerIn::run() {
     }
 }
 
-void ServerIn::stop() {
+void Server::stop() {
     m_running = false;
 }
 
-void ServerIn::receive() {
+void Server::receive() {
     char *message = zstr_recv(m_server);
     std::cout << message << std::endl;
 
@@ -37,10 +37,10 @@ void ServerIn::receive() {
       colors.push_back(color);
     }
 
-    m_mappings[m_mapping_idx]->setColors(colors);
+    setColors(colors);
     zstr_free(&message);
 }
 
-ServerIn::~ServerIn() {
+Server::~Server() {
     zsock_destroy(&m_server);
 }

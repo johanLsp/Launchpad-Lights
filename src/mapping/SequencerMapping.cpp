@@ -5,8 +5,8 @@
 
 #include <boost/bind.hpp>
 
-SequencerMapping::SequencerMapping(LaunchpadOut* output, Stripe* stripe)
-    : Mapping(output, stripe),
+SequencerMapping::SequencerMapping(Launchpad* launchpad, Stripe* stripe)
+    : Mapping(launchpad, stripe),
       m_active(false),
       m_bpm(120),
       m_syncDelayms(1000),
@@ -14,8 +14,8 @@ SequencerMapping::SequencerMapping(LaunchpadOut* output, Stripe* stripe)
       m_running(true),
       m_strobeOn(false),
       m_strobeState(0) {
-  m_sequencerPage = new SequencerPage(output);
-  m_snakePage = new SnakePage(output);
+  m_sequencerPage = new SequencerPage(launchpad);
+  m_snakePage = new SnakePage(launchpad);
   m_currentPage = m_sequencerPage;
 
   m_bpm = 120;
@@ -98,7 +98,7 @@ void SequencerMapping::noteOn(int channel, int note) {
     double intensity = m_stripe->getIntensity() + 0.25;
     if (intensity > 1.0) intensity -= 1;
     m_stripe->setIntensity(intensity);
-    m_output->setLed(NOTE_LIGHT_INTENSITY,
+    m_launchpad->setLed(NOTE_LIGHT_INTENSITY,
                      Color(255 * intensity, 255 * intensity,  255 * intensity));
   } else if (note == NOTE_DUMMY3) {
   } else if (note == NOTE_DECK) {
@@ -106,7 +106,7 @@ void SequencerMapping::noteOn(int channel, int note) {
     refresh();
   } else if (note == NOTE_STROBE) {
     m_strobeOn = true;
-    m_output->setLed(note, Color::White);
+    m_launchpad->setLed(note, Color::White);
   } else {
     if (!m_currentPage->noteOn(note))
       pageClosed();
@@ -116,7 +116,7 @@ void SequencerMapping::noteOn(int channel, int note) {
 void SequencerMapping::noteOff(int channel, int note) {
   if (note == NOTE_STROBE) {
     m_strobeOn = false;
-    m_output->setLed(note, Color::Grey);
+    m_launchpad->setLed(note, Color::Grey);
   }
 }
 
@@ -179,15 +179,15 @@ void SequencerMapping::pageClosed() {
 
 void SequencerMapping::refresh() {
     m_currentPage->refresh();
-    m_output->flashLed(NOTE_SPEED_DOWN, Color::Grey);
-    m_output->flashLed(NOTE_SPEED_UP, Color::Grey);
+    m_launchpad->flashLed(NOTE_SPEED_DOWN, Color::Grey);
+    m_launchpad->flashLed(NOTE_SPEED_UP, Color::Grey);
 
     double intensity = m_stripe->getIntensity();
-    m_output->setLed(NOTE_LIGHT_INTENSITY,
+    m_launchpad->setLed(NOTE_LIGHT_INTENSITY,
                      Color(255 * intensity, 255 * intensity, 255 * intensity));
-    m_output->setLed(NOTE_STROBE, Color::Grey);
-    m_output->setLed(NOTE_DECK, m_sequencerPage->getDeck() ? Color(0, 255, 0).dim()
+    m_launchpad->setLed(NOTE_STROBE, Color::Grey);
+    m_launchpad->setLed(NOTE_DECK, m_sequencerPage->getDeck() ? Color(0, 255, 0).dim()
                                                            : Color(0, 0, 255).dim());
-    m_output->pulseLed(NOTE_MAPPING, 5);
+    m_launchpad->pulseLed(NOTE_MAPPING, 5);
 }
 

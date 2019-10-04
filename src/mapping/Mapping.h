@@ -4,15 +4,15 @@
 
 #include <vector>
 
-#include "device/LaunchpadOut.h"
 #include "Stripe.h"
+#include "device/Launchpad.h"
 
 #define NOTE_MAPPING 104
 
 class Mapping {
  public:
-  Mapping(LaunchpadOut* output, Stripe* stripe)
-      : m_output(output), m_stripe(stripe) {}
+  Mapping(Launchpad* launchpad, Stripe* stripe)
+      : m_launchpad(launchpad), m_stripe(stripe) {}
 
   virtual void noteOn(int channel, int note) = 0;
   virtual void noteOff(int channel, int note) = 0;
@@ -21,7 +21,7 @@ class Mapping {
   virtual void stop() = 0;
 
  protected:
-  LaunchpadOut* m_output;
+  Launchpad* m_launchpad;
   Stripe* m_stripe;
 };
 

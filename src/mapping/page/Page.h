@@ -2,17 +2,17 @@
 #ifndef SRC_MAPPING_PAGE_PAGE_H
 #define SRC_MAPPING_PAGE_PAGE_H
 
-#include "device/LaunchpadOut.h"
+#include "device/Launchpad.h"
 
 class Page {
  public:
-  explicit Page(LaunchpadOut* output) : m_output(output) {}
+  explicit Page(Launchpad* launchpad) : m_launchpad(launchpad) {}
   virtual bool noteOn(int note) = 0;
   virtual void refresh() = 0;
   virtual void setCurrent(int index) = 0;
 
  protected:
-  LaunchpadOut* m_output;
+  Launchpad* m_launchpad;
 };
 
 #endif  // SRC_MAPPING_PAGE_PAGE_H

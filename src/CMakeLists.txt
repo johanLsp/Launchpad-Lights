@@ -2,9 +2,9 @@
 set(SOURCE_FILES 
     main.cpp
     Stripe.cpp
-    device/LaunchpadOut.cpp
-    device/LaunchpadIn.cpp
-    device/ServerIn.cpp
+    device/Device.cpp
+    device/Launchpad.cpp
+    device/Server.cpp
     mapping/DirectMapping.cpp
     mapping/SequencerMapping.cpp
     mapping/page/ColorPage.cpp

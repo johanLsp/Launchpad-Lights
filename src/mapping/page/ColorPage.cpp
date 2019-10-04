@@ -12,7 +12,7 @@ void ColorPage::refresh() {
           uint8_t red = 255.0 * r / 3;
           uint8_t green = 255.0 * g / 3;
           uint8_t blue = 255.0 * b / 3;
-          m_output->setLed(x, y, red, green, blue);
+          m_launchpad->setLed(x, y, red, green, blue);
       }
     }
   }

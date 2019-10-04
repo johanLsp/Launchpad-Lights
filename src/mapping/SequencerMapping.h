@@ -27,7 +27,7 @@ class SequencerMapping : public Mapping {
   enum Mode {SequencerMode, ColorMode};
 
  public:
-  SequencerMapping(LaunchpadOut* output, Stripe* stripe);
+  SequencerMapping(Launchpad* launchpad, Stripe* stripe);
   ~SequencerMapping();
 
   void noteOn(int channel, int note) override;

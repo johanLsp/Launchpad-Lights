@@ -1,8 +1,8 @@
 // Copyright 2019 Johan Lasperas
 #include "SequencerPage.h"
 
-SequencerPage::SequencerPage(LaunchpadOut* output)
-: Page(output) {
+SequencerPage::SequencerPage(Launchpad* launchpad)
+: Page(launchpad) {
   m_palette[0] = Color::Red;
   m_palette[1] = Color::Green;
   m_palette[2] = Color::Blue;
@@ -15,34 +15,34 @@ SequencerPage::SequencerPage(LaunchpadOut* output)
 
 
 void SequencerPage::refresh() {
-  m_output->beginTransaction();
+  m_launchpad->beginTransaction();
 
   for (int deck = 0; deck < 2; deck++) {
-      for (int index = 0; index < 32; index++) {
-          m_output->setLed(getNote(deck, index), m_colors[deck][index].dim());
-      }
+    for (int index = 0; index < 32; index++) {
+      m_launchpad->setLed(getNote(deck, index), m_colors[deck][index].dim());
+    }
   }
   for (int i = 0; i < 8; i++) {
-      if (i == m_color_idx) {
-          m_output->setLed(9, i + 1, m_palette[i]);
-      } else {
-          m_output->setLed(9, i + 1, m_palette[i].dim());
-      }
+    if (i == m_color_idx) {
+      m_launchpad->setLed(9, i + 1, m_palette[i]);
+    } else {
+      m_launchpad->setLed(9, i + 1, m_palette[i].dim());
+    }
   }
-  m_output->commitTransaction();
+  m_launchpad->commitTransaction();
 }
 
 bool SequencerPage::noteOn(int note) {
   // Buttons on the right
   if (note%10 == 9) {
-    m_output->setLed(9, m_color_idx + 1, getCurrentColor().dim());
+    m_launchpad->setLed(9, m_color_idx + 1, getCurrentColor().dim());
     m_color_idx = note / 10 - 1;
-    m_output->setLed(9, m_color_idx + 1, getCurrentColor());
+    m_launchpad->setLed(9, m_color_idx + 1, getCurrentColor());
   } else {
     int deck = getDeck(note);
     int index = getIndex(note);
     setColor(deck, index);
-    m_output->setLed(note, m_colors[deck][index].dim());
+    m_launchpad->setLed(note, m_colors[deck][index].dim());
   }
   return true;
 }
@@ -61,13 +61,13 @@ void SequencerPage::setColor(int deck, int index, Color color) {
 
 void SequencerPage::setCurrent(int index) {
   int previous = (index == 0 ? 31 : index-1);
-  m_output->setLed(getNote(m_currentDeck, previous),
+  m_launchpad->setLed(getNote(m_currentDeck, previous),
                    m_colors[m_currentDeck][previous].dim());
 
   if (m_colors[m_currentDeck][index] == Color::Black) {
-    m_output->setLed(getNote(m_currentDeck, index), Color::Grey);
+    m_launchpad->setLed(getNote(m_currentDeck, index), Color::Grey);
   } else {
-    m_output->setLed(getNote(m_currentDeck, index),
+    m_launchpad->setLed(getNote(m_currentDeck, index),
                      m_colors[m_currentDeck][index]);
   }
 }
