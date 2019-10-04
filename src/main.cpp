@@ -2,9 +2,10 @@
 #include <csignal>
 
 #include "device/Launchpad.h"
-#include "device/Server.h"
 #include "mapping/DirectMapping.h"
 #include "mapping/SequencerMapping.h"
+#include "transport/ColorServer.h"
+#include "transport/MidiLocal.h"
 
 bool done = false;
 void signalHandler(int signum) {
@@ -20,8 +21,10 @@ void run() {
 
 int main(int argc, char** argv) {
   Stripe stripe;
-  Launchpad launchpad;
-  Server server;
+
+  MidiLocal midiLocal;
+  ColorServer colorServer;
+  Launchpad launchpad(&midiLocal);
 
   DirectMapping direct(&launchpad, &stripe);
   SequencerMapping sequencer(&launchpad, &stripe);
@@ -36,10 +39,9 @@ int main(int argc, char** argv) {
   } else {
     std::cout << "Launchpad not connected, fallback to server mode"
               << std::endl;
-    server.addMapping(&sequencer);
-    std::thread serverThread(&Server::run, &server);
-    run();
-    server.stop();
+    launchpad = Launchpad(&colorServer);
+    launchpad.addMapping(&sequencer);
+    colorServer.start();
     // TODO: Add a timeout to the ZeroMQ receive call so the
     // server thread does not block
     //serverThread.join();

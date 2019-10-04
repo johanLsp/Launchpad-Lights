@@ -4,12 +4,14 @@ set(SOURCE_FILES
     Stripe.cpp
     device/Device.cpp
     device/Launchpad.cpp
-    device/Server.cpp
     mapping/DirectMapping.cpp
     mapping/SequencerMapping.cpp
     mapping/page/ColorPage.cpp
     mapping/page/SequencerPage.cpp
     mapping/page/SnakePage.cpp
+    transport/ColorServer.cpp
+    transport/MidiLocal.cpp
+    transport/Transport.cpp
     util/Color.cpp)
 
 add_executable(lights ${SOURCE_FILES})

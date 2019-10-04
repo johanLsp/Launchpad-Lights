@@ -3,6 +3,10 @@
 
 #include <functional>
 
+#include "json.hpp"
+
+using nlohmann::json;
+
 namespace {
   // See Launchpad MKII Programmer's Reference Manual.
   static const ustring kNoteOff = {128_u};
@@ -25,71 +29,43 @@ namespace {
   static const ustring kSysExFader = kSysEx + 43_u;
 }  // namespace
 
-void recv_bind(double timestamp, std::vector<unsigned char>* message,
-               void* userData) {
-  Launchpad* launchpad = reinterpret_cast<Launchpad*>(userData);
-  ustring message_str(message->begin(), message->end());
-  launchpad->receive(message_str);
-}
-
-Launchpad::Launchpad()
-    : m_connected(false) {
-  m_output = new RtMidiOut();
-  unsigned int nPorts = m_output->getPortCount();
-
-  for (int i = 0; i < nPorts; i++) {
-    std::string name = m_output->getPortName(i);
-    if (name.compare(0, 9, "Launchpad") == 0) {
-      m_connected = true;
-      std::cout << "Output : " << name << std::endl;
-      m_output->openPort(i);
-    }
-  }
+Launchpad::Launchpad(Transport* transport)
+    : Device(transport) {
   setAllLed(0);
-
-  m_input = new RtMidiIn();
-
-  // Check available ports.
-  nPorts = m_input->getPortCount();
-
-  for (int i = 0; i < nPorts; i++) {
-    std::string name = m_input->getPortName(i);
-    if (name.compare(0, 9, "Launchpad") == 0) {
-      m_connected = true;
-      m_input->openPort(i);
-      m_input->setCallback(&recv_bind, this);
-    }
-  }
 }
 
-Launchpad::~Launchpad() {
-  delete m_output;
-  delete m_input;
-}
+void Launchpad::receive(Transport::Type type, const ustring& message) {
+  switch (type) {
+    case Transport::Type::MIDI: {
+      if (message.size() < 3) return;
+      int channel = message.at(0);
+      int note    = message.at(1);
+      int command = message.at(2);
 
-void Launchpad::receive(const ustring& message) {
-  if (message.size() < 3) return;
-  uint8_t channel = message.at(0);
-  uint8_t note    = message.at(1);
-  uint8_t command = message.at(2);
-
-  switch (command) {
-    case 127:
-      if (note == 104) {
-        changeMapping();
-      } else {
-        noteOn(channel, note);
+      switch (command) {
+        case 127:
+          if (note == 104) {
+            changeMapping();
+          } else {
+            noteOn(channel, note);
+          }
+          break;
+        case 0:
+          noteOff(channel, note);
+          break;
       }
       break;
-    case 0:
-      noteOff(channel, note);
-      break;
+    }
+    case Transport::Type::COLOR: {
+      std::vector<Color> colors;
+      json j = json::parse(message.c_str() + 7);
+      for (auto& c : j) {
+        Color color(c["red"], c["green"], c["blue"]);
+        colors.push_back(color);
+      }
+      setColors(colors);
+    }
   }
-}
-
-void Launchpad::send(const ustring& message) {
-  std::vector<unsigned char> buffer(message.begin(), message.end());
-  m_output->sendMessage(&buffer);
 }
 
 void Launchpad::setLed(uint8_t note, uint8_t red, uint8_t green,

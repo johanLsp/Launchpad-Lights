@@ -11,8 +11,9 @@
 
 class Launchpad : public Device {
  public:
-  Launchpad();
-  ~Launchpad();
+  explicit Launchpad(Transport* transport);
+
+  void receive(Transport::Type type, const ustring& message) override;
 
   void setAllLed(uint8_t color);
   void setLed(uint8_t x, uint8_t y, uint8_t color);
@@ -29,16 +30,8 @@ class Launchpad : public Device {
   void beginTransaction();
   void commitTransaction();
 
-  bool isConnected() { return m_connected; }
-  void receive(const ustring& message);
-
  private:
-  void send(const ustring& message);
-
-  RtMidiIn* m_input;
-  RtMidiOut* m_output;
   bool m_transactional = false;
-  bool m_connected;
   ustring m_message;
 };
 
