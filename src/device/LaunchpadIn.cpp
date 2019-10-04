@@ -6,7 +6,8 @@
 void recv_bind(double timestamp, std::vector<unsigned char>* message,
                void* userData) {
   LaunchpadIn* launchpad = reinterpret_cast<LaunchpadIn*>(userData);
-  launchpad->receive(message);
+  ustring message_str(message->begin(), message->end());
+  launchpad->receive(message_str);
 }
 
 LaunchpadIn::LaunchpadIn()
@@ -30,11 +31,11 @@ LaunchpadIn::~LaunchpadIn() {
   delete m_input;
 }
 
-void LaunchpadIn::receive(std::vector<unsigned char>* message) {
-  unsigned int nBytes = message->size();
-  int channel = message->at(0);
-  int note    = message->at(1);
-  int command = message->at(2);
+void LaunchpadIn::receive(const ustring& message) {
+  if (message.size() < 3) return;
+  uint8_t channel = message.at(0);
+  uint8_t note    = message.at(1);
+  uint8_t command = message.at(2);
 
   switch (command) {
     case 127:

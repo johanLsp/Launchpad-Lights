@@ -3,6 +3,28 @@
 
 #include <functional>
 
+namespace {
+  // See Launchpad MKII Programmer's Reference Manual.
+  static const ustring kNoteOff = {128_u};
+  static const ustring kNoteOn = {144_u};
+  static const ustring kFlash = {145_u};
+  static const ustring kPulse = {146_u};
+  static const ustring kCCFlash = {177_u};
+  static const ustring kCCPulse = {178_u};
+  static const ustring kSysEx = {240_u, 0_u, 32_u, 41_u, 2_u, 24_u};
+  static const ustring kSysExEnd = {247_u};
+  static const ustring kSysExLedStd = kSysEx + 10_u;
+  static const ustring kSysExLedRGB = kSysEx + 11_u;
+  static const ustring kSysExColumn = kSysEx + 12_u;
+  static const ustring kSysExRow = kSysEx + 13_u;
+  static const ustring kSysExAll = kSysEx + 14_u;
+  static const ustring kSysExFlash = kSysEx + 35_u;
+  static const ustring kSysExPulse = kSysEx + 40_u;
+  static const ustring kSysExScrollText = kSysEx + 20_u;
+  static const ustring kSysExLayout = kSysEx + 34_u;
+  static const ustring kSysExFader = kSysEx + 43_u;
+}  // namespace
+
 LaunchpadOut::LaunchpadOut()
     : m_connected(false) {
   m_output = new RtMidiOut();
@@ -23,40 +45,33 @@ LaunchpadOut::~LaunchpadOut() {
   delete m_output;
 }
 
+void LaunchpadOut::send(const ustring& message) {
+  std::vector<unsigned char> buffer(message.begin(), message.end());
+  m_output->sendMessage(&buffer);
+}
+
 void LaunchpadOut::setLed(uint8_t note, uint8_t red, uint8_t green,
                           uint8_t blue) {
   if (!m_transactional) {
-    m_message.clear();
-    m_message.push_back(240);
-    m_message.push_back(0);
-    m_message.push_back(32);
-    m_message.push_back(41);
-    m_message.push_back(2);
-    m_message.push_back(24);
-    m_message.push_back(11);
+    m_message = kSysExLedRGB;
   }
-
-  m_message.push_back(note);
-  m_message.push_back(red   * 63.0 / 255);
-  m_message.push_back(green * 63.0 / 255);
-  m_message.push_back(blue  * 63.0 / 255);
+  m_message += note;
+  m_message += red   * 63.0 / 255;
+  m_message += green * 63.0 / 255;
+  m_message += blue  * 63.0 / 255;
 
   if (!m_transactional && isConnected()) {
-    m_message.push_back(247);
-    m_output->sendMessage(&m_message);
+    m_message += kSysExEnd;
+    send(m_message);
   }
 }
 
 void LaunchpadOut::setLed(uint8_t x, uint8_t y, uint8_t color) {
   if (x < 1 || x > 8) return;
   if (y < 1 || y > 8) return;
-
-  std::vector<unsigned char> message;
-  message.push_back(144);
-  message.push_back(10 * y + x);
-  message.push_back(color);
+  uint8_t note = 10 * y + x;
   if (isConnected()) {
-    m_output->sendMessage(&message);
+    send(kNoteOn + note + color);
   }
 }
 
@@ -75,41 +90,22 @@ void LaunchpadOut::setLed(uint8_t x, uint8_t y, Color color) {
   setLed(x, y, color.red, color.green, color.blue);
 }
 
-void LaunchpadOut::setAllLed(int color) {
-  std::vector<unsigned char> message;
-  message.push_back(240);
-  message.push_back(0);
-  message.push_back(32);
-  message.push_back(41);
-  message.push_back(2);
-  message.push_back(24);
-  message.push_back(14);
-  message.push_back(color);
-  message.push_back(247);
+void LaunchpadOut::setAllLed(uint8_t color) {
   if (isConnected()) {
-    m_output->sendMessage(&message);
+    send(kSysExAll + color + kSysExEnd);
   }
 }
 
-void LaunchpadOut::flashLed(int note, Color color) {
+void LaunchpadOut::flashLed(uint8_t note, Color color) {
   setLed(note, color);
-  int channel;
-  // CC (177) message for top row, NoteOn(145) for all others
-  if (note > 100) {
-    channel = 177;
-  } else {
-    channel = 145;
-  }
-  std::vector<unsigned char> message;
-  message.push_back(channel);
-  message.push_back(note);
-  message.push_back(0);
+  //  CC message for top row, regular for all others
+  ustring channel = note > 100 ? kCCFlash : kFlash;
   if (isConnected()) {
-    m_output->sendMessage(&message);
+    send(channel + note + 0_u);
   }
 }
 
-void LaunchpadOut::pulseLed(int x, int y, Color color) {
+void LaunchpadOut::pulseLed(uint8_t x, uint8_t y, Color color) {
   if (color == Color::Red) {
     pulseLed(10 * y + x, 5);
   } else if (color == Color::Blue) {
@@ -119,63 +115,31 @@ void LaunchpadOut::pulseLed(int x, int y, Color color) {
   }
 }
 
-void LaunchpadOut::pulseLed(int note, int color) {
-  int channel;
-  //  CC (178) message for top row, NoteOn(146) for all others
-  if (note > 100) {
-    channel = 178;
-  } else {
-    channel = 146;
-  }
-  std::vector<unsigned char> message;
-  message.push_back(channel);
-  message.push_back(note);
-  message.push_back(color);
+void LaunchpadOut::pulseLed(uint8_t note, uint8_t color) {
+  //  CC message for top row, regular for all others
+  ustring channel = note > 100 ? kCCPulse : kPulse;
   if (isConnected()) {
-    m_output->sendMessage(&message);
+    send(channel + note + color);
   }
 }
 
 void LaunchpadOut::beginTransaction() {
   m_message.clear();
-  m_message.push_back(240);
-  m_message.push_back(0);
-  m_message.push_back(32);
-  m_message.push_back(41);
-  m_message.push_back(2);
-  m_message.push_back(24);
-
-  m_message.push_back(11);
-
+  m_message = kSysExLedRGB;
   m_transactional = true;
 }
 
 void LaunchpadOut::commitTransaction() {
-  m_message.push_back(247);
+  m_message += kSysExEnd;
   if (isConnected()) {
-      m_output->sendMessage(&m_message);
+      send(m_message);
   }
   m_transactional = false;
 }
 
-void LaunchpadOut::scrollText(std::string text) {
-  std::vector<unsigned char> message;
-  message.push_back(240);
-  message.push_back(0);
-  message.push_back(32);
-  message.push_back(41);
-  message.push_back(2);
-  message.push_back(24);
-  message.push_back(20);
-
-  message.push_back(5);
-  message.push_back(0);
-
-  for (int i = 0; i < text.size(); i++) {
-    message.push_back(text[i]);
-  }
-  message.push_back(247);
+void LaunchpadOut::scrollText(const std::string& text) {
+  ustring utext(text.begin(), text.end());
   if (isConnected()) {
-    m_output->sendMessage(&message);
+    send(kSysExScrollText + utext + kSysExEnd);
   }
 }

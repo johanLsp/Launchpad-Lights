@@ -7,23 +7,25 @@
 #include <vector>
 #include "rtmidi/RtMidi.h"
 #include "Color.h"
+#include "util/UString.h"
 
 class LaunchpadOut {
  public:
   LaunchpadOut();
   ~LaunchpadOut();
 
-  void setAllLed(int color);
+
+  void setAllLed(uint8_t color);
   void setLed(uint8_t x, uint8_t y, uint8_t color);
   void setLed(uint8_t x, uint8_t y, Color color);
   void setLed(uint8_t note, Color color);
   void setLed(uint8_t note, uint8_t red, uint8_t green, uint8_t blue);
   void setLed(uint8_t x, uint8_t y, uint8_t red, uint8_t green, uint8_t blue);
-  void flashLed(int note, Color color);
+  void flashLed(uint8_t note, Color color);
 
-  void pulseLed(int x, int y, Color color);
-  void pulseLed(int note, int color);
-  void scrollText(std::string text);
+  void pulseLed(uint8_t x, uint8_t y, Color color);
+  void pulseLed(uint8_t note, uint8_t color);
+  void scrollText(const std::string& text);
 
   void beginTransaction();
   void commitTransaction();
@@ -31,10 +33,12 @@ class LaunchpadOut {
   bool isConnected() { return m_connected; }
 
  private:
+  void send(const ustring& message);
+
   RtMidiOut* m_output;
   bool m_transactional = false;
   bool m_connected;
-  std::vector<unsigned char> m_message;
+  ustring m_message;
 };
 
 #endif  // SRC_DEVICE_LAUNCHPADOUT_H_

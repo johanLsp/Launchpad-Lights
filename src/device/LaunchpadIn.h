@@ -8,13 +8,14 @@
 
 #include "device/DeviceIn.h"
 #include "mapping/Mapping.h"
+#include "util/UString.h"
 
 class LaunchpadIn : public DeviceIn {
  public:
   LaunchpadIn();
   ~LaunchpadIn();
 
-  void receive(std::vector<unsigned char> *message);
+  void receive(const ustring& message);
   bool isConnected() { return m_connected; }
 
  private:
