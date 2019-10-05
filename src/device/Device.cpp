@@ -32,3 +32,7 @@ void Device::changeMapping() {
     m_mapping_idx = 0;
   m_mappings[m_mapping_idx]->start();
 }
+
+void Device::start() {
+  m_mappings[m_mapping_idx]->start();
+}

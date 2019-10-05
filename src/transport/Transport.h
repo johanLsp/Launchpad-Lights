@@ -22,18 +22,16 @@ class Transport {
 
  protected:
   void receive(const ustring& message);
+  virtual Type type() { return Type::INVALID; }
 
-  static const Type m_type = Type::INVALID;
   bool m_connected;
 
  private:
   Device* m_device;
 };
 
-
 class Midi : public Transport {
- protected:
-  static const Transport::Type m_type = Transport::Type::MIDI;
+  Type type() override { return Type::MIDI; }
 };
 
 #endif  // SRC_TRANSPORT_TRANSPORT_H_

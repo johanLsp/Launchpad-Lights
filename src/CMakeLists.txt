@@ -15,6 +15,7 @@ set(SOURCE_FILES
     transport/Transport.cpp
     util/Color.cpp)
 
+include_directories(.)
 add_executable(lights ${SOURCE_FILES})
 
 target_link_libraries(lights -L/usr/local/lib/)

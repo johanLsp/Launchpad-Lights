@@ -29,10 +29,14 @@ zactor_t* proxy = zactor_new(zproxy, NULL);
     }
     if (poll != nullptr) {
       zsock_t* reader = reinterpret_cast<zsock_t*>(poll);
-      char *message = zstr_recv(reader);
-      ustring message_str(reinterpret_cast<unsigned char*>(message));
+      zframe_t* frame = zframe_recv(reader);
+      // Strip the topic
+      // Deal with mesage containing null characters.
+      unsigned char* data = zframe_data(frame) + strlen("MidiIn ");
+      int length = zframe_size(frame) - strlen("MidiIn ");
+      ustring message_str(data, length);
       receive(message_str);
-      zstr_free(&message);
+      zframe_destroy(&frame);
     }
   }
   zpoller_destroy(&poller);
@@ -40,9 +44,11 @@ zactor_t* proxy = zactor_new(zproxy, NULL);
 }
 
 void MidiServer::send(const ustring& message) {
-  const char* data = reinterpret_cast<const char*>(message.c_str());
-  std::string frame = std::string("Midi ") + data;
-  zstr_send(m_publisher, frame.c_str());
+  std::string data = std::string("MidiOut ")
+    + std::string(reinterpret_cast<const char*>(message.c_str()), message.size());
+  zframe_t* frame = zframe_new(data.c_str(), data.size());
+  zframe_send(&frame, m_publisher, 0);
+  zframe_destroy(&frame);
 }
 
 void MidiServer::start() {

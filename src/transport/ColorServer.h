@@ -16,6 +16,9 @@ class ColorServer : public Transport {
 
   void send(const ustring& message) override {}
 
+ protected:
+  Type type() override { return Type::COLOR; }
+
 
  private:
   bool m_running;

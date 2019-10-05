@@ -28,6 +28,7 @@ class Device {
   void noteOff(int channel, int note);
   void setColors(const std::vector<Color>& colors);
   void changeMapping();
+  void start();
 
   int m_mapping_idx;
   std::vector<Mapping*> m_mappings;

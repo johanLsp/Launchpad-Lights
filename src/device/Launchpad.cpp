@@ -38,11 +38,14 @@ void Launchpad::receive(Transport::Type type, const ustring& message) {
   switch (type) {
     case Transport::Type::MIDI: {
       if (message.size() < 3) return;
-      int channel = message.at(0);
-      int note    = message.at(1);
-      int command = message.at(2);
+      uint8_t channel = message.at(0);
+      uint8_t note    = message.at(1);
+      uint8_t command = message.at(2);
 
       switch (command) {
+        case 128:
+          start();
+          break;
         case 127:
           if (note == 104) {
             changeMapping();
@@ -53,6 +56,8 @@ void Launchpad::receive(Transport::Type type, const ustring& message) {
         case 0:
           noteOff(channel, note);
           break;
+        default:
+          std::cout << "Unknown command: " << (int) command << std::endl;
       }
       break;
     }
