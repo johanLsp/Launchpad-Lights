@@ -6,6 +6,7 @@
 #include "mapping/SequencerMapping.h"
 #include "transport/ColorServer.h"
 #include "transport/MidiLocal.h"
+#include "transport/MidiServer.h"
 
 bool done = false;
 void signalHandler(int signum) {
@@ -22,9 +23,9 @@ void run() {
 int main(int argc, char** argv) {
   Stripe stripe;
 
-  MidiLocal midiLocal;
+  MidiServer midi;
   ColorServer colorServer;
-  Launchpad launchpad(&midiLocal);
+  Launchpad launchpad(&midi);
 
   DirectMapping direct(&launchpad, &stripe);
   SequencerMapping sequencer(&launchpad, &stripe);
@@ -35,7 +36,9 @@ int main(int argc, char** argv) {
     launchpad.addMapping(&direct);
     launchpad.addMapping(&sequencer);
     launchpad.setAllLed(0);
+    midi.start();
     run();
+    midi.stop();
   } else {
     std::cout << "Launchpad not connected, fallback to server mode"
               << std::endl;
