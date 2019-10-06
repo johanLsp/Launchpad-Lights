@@ -8,39 +8,29 @@ MidiServer::MidiServer()
     : m_running(false) {
   m_subscriber = zsock_new_sub(">tcp://127.0.0.1:7060", "MidiIn");
   m_publisher = zsock_new_pub(">tcp://127.0.0.1:7061");
+
+  // Setup a proxy to forward messages between the XSUB and XPUB sockets.
+  m_proxy = zactor_new(zproxy, NULL);
+  zstr_sendx(m_proxy, "FRONTEND", "XSUB", "@tcp://*:7061", NULL);
+  zsock_wait(m_proxy);
+  zstr_sendx(m_proxy, "BACKEND", "XPUB", "@tcp://*:7060", NULL);
+  zsock_wait(m_proxy);
+
+  // Disable the ZeroMQ signal handler to use the one defined in main.cpp
   zsys_handler_set(NULL);
   m_connected = true;
 }
 
-void MidiServer::run() {
-zactor_t* proxy = zactor_new(zproxy, NULL);
-  zstr_sendx(proxy, "FRONTEND", "XSUB", "@tcp://*:7061", NULL);
-  zsock_wait(proxy);
-  zstr_sendx(proxy, "BACKEND", "XPUB", "@tcp://*:7060", NULL);
-  zsock_wait(proxy);
-
-  zpoller_t* poller = zpoller_new(m_subscriber, NULL);
-  m_running = true;
-  while (m_running) {
-    void* poll = zpoller_wait(poller, 1000);
-    if (zpoller_terminated(poller)) {
-      m_running = false;
-      break;
-    }
-    if (poll != nullptr) {
-      zsock_t* reader = reinterpret_cast<zsock_t*>(poll);
-      zframe_t* frame = zframe_recv(reader);
-      // Strip the topic
-      // Deal with mesage containing null characters.
-      unsigned char* data = zframe_data(frame) + strlen("MidiIn ");
-      int length = zframe_size(frame) - strlen("MidiIn ");
-      ustring message_str(data, length);
-      receive(message_str);
-      zframe_destroy(&frame);
-    }
-  }
-  zpoller_destroy(&poller);
-  zactor_destroy(&proxy);
+int MidiServer::receiveCallback(zloop_t* loop, zsock_t* reader, void* arg) {
+  MidiServer* server = reinterpret_cast<MidiServer*>(arg);
+  zframe_t* frame = zframe_recv(reader);
+  // Strip the topic
+  unsigned char* data = zframe_data(frame) + strlen("MidiIn ");
+  int length = zframe_size(frame) - strlen("MidiIn ");
+  ustring message_str(data, length);
+  server->receive(message_str);
+  zframe_destroy(&frame);
+  return 0;
 }
 
 void MidiServer::send(const ustring& message) {
@@ -51,17 +41,29 @@ void MidiServer::send(const ustring& message) {
   zframe_destroy(&frame);
 }
 
+void MidiServer::run() {
+  m_reader = zloop_new();
+  zloop_reader(m_reader, m_subscriber, MidiServer::receiveCallback, this);
+  zloop_start(m_reader);
+}
+
 void MidiServer::start() {
+  if (m_running) return;
   m_thread = new std::thread(&MidiServer::run, this);
 }
 
 void MidiServer::stop() {
+  if (!m_running) return;
   m_running = false;
+  zloop_reader_end(m_reader, m_subscriber);
   m_thread->join();
+  delete m_thread;
 }
 
 MidiServer::~MidiServer() {
+  stop();
+  zloop_destroy(&m_reader);
+  zactor_destroy(&m_proxy);
   zsock_destroy(&m_subscriber);
   zsock_destroy(&m_publisher);
-  delete m_thread;
 }

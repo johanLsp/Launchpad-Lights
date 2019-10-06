@@ -27,18 +27,11 @@ int main() {
   }
 }
 
-void receiveCallback(double timestamp, std::vector<unsigned char>* message,
-                     void* data) {
-  MidiClient* client = reinterpret_cast<MidiClient*>(data);
-  std::string message_str(message->begin(), message->end());
-  client->forwardRemote(message_str);
-}
-
 MidiClient::MidiClient()
     : m_connected(false), m_running(false), m_thread(nullptr) {
   m_output = new RtMidiOut();
   m_input = new RtMidiIn();
-  m_input->setCallback(&::receiveCallback, this);
+  m_input->setCallback(&MidiClient::midiCallback, this);
 
   m_subscriber = zsock_new_sub(">tcp://127.0.0.1:7060", "MidiOut");
   m_publisher = zsock_new_pub(">tcp://127.0.0.1:7061");
@@ -91,26 +84,27 @@ void MidiClient::disconnect() {
 }
 
 void MidiClient::run() {
-  zpoller_t* poller = zpoller_new(m_subscriber, NULL);
-  m_running = true;
-  while (m_running) {
-    void* poll = zpoller_wait(poller, 1000);
-    if (zpoller_terminated(poller)) {
-      m_running = false;
-      break;
-    }
-    if (poll != nullptr) {
-      zsock_t* reader = reinterpret_cast<zsock_t*>(poll);
-      zframe_t* frame = zframe_recv(reader);
-      // Strip the topic
-      unsigned char* data = zframe_data(frame) + strlen("MidiOut ");
-      int length = zframe_size(frame) - strlen("MidiOut ");
-      std::string message_str(reinterpret_cast<char*>(data), length);
-      forwardLocal(message_str);
-      zframe_destroy(&frame);
-    }
-  }
-  zpoller_destroy(&poller);
+  m_reader = zloop_new();
+  zloop_reader(m_reader, m_subscriber, &MidiClient::readerCallback, this);
+  zloop_start(m_reader);
+}
+
+void MidiClient::midiCallback(double timestamp, std::vector<unsigned char>* message, void* data) {
+  MidiClient* client = reinterpret_cast<MidiClient*>(data);
+  std::string message_str(message->begin(), message->end());
+  client->forwardRemote(message_str);
+}
+
+int MidiClient::readerCallback(zloop_t* loop, zsock_t* reader, void* arg) {
+  MidiClient* client = reinterpret_cast<MidiClient*>(arg);
+  zframe_t* frame = zframe_recv(reader);
+  // Strip the topic
+  unsigned char* data = zframe_data(frame) + strlen("MidiOut ");
+  int length = zframe_size(frame) - strlen("MidiOut ");
+  std::string message_str(reinterpret_cast<char*>(data), length);
+  client->forwardLocal(message_str);
+  zframe_destroy(&frame);
+  return 0;
 }
 
 void MidiClient::forwardRemote(const std::string& message) {
@@ -126,22 +120,23 @@ void MidiClient::forwardLocal(const std::string& message) {
 }
 
 void MidiClient::start() {
+  if (m_running) return;
   m_thread = new std::thread(&MidiClient::run, this);
   forwardRemote({0, 0, -128});
 }
 
 void MidiClient::stop() {
+  if (!m_running) return;
   m_running = false;
+  zloop_reader_end(m_reader, m_subscriber);
   m_thread->join();
   delete m_thread;
-  m_thread = nullptr;
 }
 
 MidiClient::~MidiClient() {
+  stop();
   zsock_destroy(&m_subscriber);
   zsock_destroy(&m_publisher);
   delete m_input;
   delete m_output;
-  delete m_thread;
-  m_thread = nullptr;
 }

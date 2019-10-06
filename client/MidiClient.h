@@ -25,6 +25,8 @@ class MidiClient {
 
  private:
   int setupLocalMidi();
+  static void midiCallback(double timestamp, std::vector<unsigned char>* message, void* data);
+  static int readerCallback(zloop_t* loop, zsock_t* reader, void* arg);
 
   bool m_running;
   bool m_connected;
@@ -32,6 +34,7 @@ class MidiClient {
   RtMidiOut* m_output;
   zsock_t* m_subscriber;
   zsock_t* m_publisher;
+  zloop_t* m_reader;
   std::thread* m_thread;
 };
 
