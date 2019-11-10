@@ -43,7 +43,8 @@ void Launchpad::receive(Transport::Type type, const ustring& message) {
       uint8_t command = message.at(2);
 
       switch (command) {
-        case 128:
+        case 105:
+          std::cout << "Refresh" << std::endl;
           start();
           break;
         case 127:

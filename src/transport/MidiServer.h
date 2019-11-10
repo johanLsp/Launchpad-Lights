@@ -24,10 +24,12 @@ class MidiServer : public Midi {
 
  private:
   static int receiveCallback(zloop_t* loop, zsock_t* reader, void* arg);
+  void setupBeacon();
 
   bool m_running;
   zsock_t* m_subscriber;
   zsock_t* m_publisher;
+  zactor_t* m_beacon;
   zactor_t* m_proxy;
   zloop_t* m_reader;
   std::thread* m_thread;

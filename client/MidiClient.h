@@ -13,29 +13,30 @@ class MidiClient {
   MidiClient();
   ~MidiClient();
 
-  void connect();
-  void disconnect();
-  void run();
   void start();
   void stop();
   void forwardRemote(const std::string& message);
   void forwardLocal(const std::string& message);
 
-  bool isConnected();
-
  private:
-  int setupLocalMidi();
-  static void midiCallback(double timestamp, std::vector<unsigned char>* message, void* data);
-  static int readerCallback(zloop_t* loop, zsock_t* reader, void* arg);
+  void attachServer();
+  void attachMidi();
+  void refresh();
+  static void midiCallback(double timestamp,
+                           std::vector<unsigned char>* message,
+                           void* data);
 
-  bool m_running;
-  bool m_connected;
   RtMidiIn* m_input;
   RtMidiOut* m_output;
   zsock_t* m_subscriber;
   zsock_t* m_publisher;
   zloop_t* m_reader;
-  std::thread* m_thread;
+
+  bool m_running;
+  bool m_serverConnected;
+  std::thread* m_server_thread;
+  bool m_midiConnected;
+  std::thread* m_midi_thread;
 };
 
 #endif  // CLIENT_MIDICLIENT_H_

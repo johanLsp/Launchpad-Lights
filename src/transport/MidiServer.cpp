@@ -15,10 +15,20 @@ MidiServer::MidiServer()
   zsock_wait(m_proxy);
   zstr_sendx(m_proxy, "BACKEND", "XPUB", "@tcp://*:7060", NULL);
   zsock_wait(m_proxy);
+  setupBeacon();
 
   // Disable the ZeroMQ signal handler to use the one defined in main.cpp
   zsys_handler_set(NULL);
   m_connected = true;
+}
+
+void MidiServer::setupBeacon() {
+  m_beacon = zactor_new(zbeacon, NULL);
+  zsock_send(m_beacon, "si", "CONFIGURE", 7062);
+  char *hostname = zstr_recv(m_beacon);
+  std::cout << "Beacon set up on " << hostname << std::endl;
+  zsock_send(m_beacon, "sbi", "PUBLISH", "MidiServer",
+             strlen("MidiServer"), 1000);
 }
 
 int MidiServer::receiveCallback(zloop_t* loop, zsock_t* reader, void* arg) {
@@ -63,6 +73,7 @@ void MidiServer::stop() {
 MidiServer::~MidiServer() {
   stop();
   zloop_destroy(&m_reader);
+  zactor_destroy(&m_beacon);
   zactor_destroy(&m_proxy);
   zsock_destroy(&m_subscriber);
   zsock_destroy(&m_publisher);
