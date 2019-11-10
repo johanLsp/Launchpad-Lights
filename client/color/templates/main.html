@@ -1,0 +1,86 @@
+
+
+<!DOCTYPE html>
+<html style="height:100%">
+<head>
+   <title>RPi Web Server</title>
+   <!-- Latest compiled and minified CSS -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+   <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+   <!-- Latest compiled and minified JavaScript -->
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body style="height:100%;">
+   <h1>Jujo Lights</h1>
+       <div class="row" style="height:20%">
+	 <div class="col-xs-12" style="height:100%">
+           {% if active == 'off' %}
+       	   <a href="/off" class="btn btn-block btn-lg btn-primary" style="height:100%" role="button">Off</a>
+	   {% else %}
+           <a href="/off" class="btn btn-block btn-lg btn-default" style="height:100%" role="button">Off</a> 
+	   {% endif %}
+	 </div>
+       </div>
+       <div class="row" style="height:20%">
+	 <div class="col-xs-4" style="height:100%">
+       	   {% if active == 'red' %}
+       	   <a href="/red" class="btn btn-block btn-lg btn-primary" style="height:100%" role="button">Red</a>
+	   {% else %}
+           <a href="/red" class="btn btn-block btn-lg btn-default" style="height:100%" role="button">Red</a> 
+	   {% endif %}
+	 </div>
+	 <div class="col-xs-4" style="height:100%">
+	   {% if active == 'green' %}
+       	   <a href="/green" class="btn btn-block btn-lg btn-primary" style="height:100%" role="button">Green</a>
+	   {% else %}
+           <a href="/green" class="btn btn-block btn-lg btn-default" style="height:100%" role="button">Green</a> 
+	   {% endif %}
+	 </div>
+	 <div class="col-xs-4" style="height:100%">
+	   {% if active == 'blue' %}
+       	   <a href="/blue" class="btn btn-block btn-lg btn-primary" style="height:100%" role="button">Blue</a>
+	   {% else %}
+           <a href="/blue" class="btn btn-block btn-lg btn-default" style="height:100%" role="button">Blue</a> 
+	   {% endif %}
+ 	 </div>
+       </div>
+       <div class="row" style="height:20%">
+	 <div class="col-xs-4" style="height:100%">
+       	   {% if active == 'cyan' %}
+	   <a href="/cyan" class="btn btn-block btn-lg btn-primary" style="height:100%" role="button">Cyan</a>
+	   {% else %}
+           <a href="/cyan" class="btn btn-block btn-lg btn-default" style="height:100%" role="button">Cyan</a> 
+	   {% endif %}
+	 </div>
+	 <div class="col-xs-4" style="height:100%">
+	   {% if active == 'yellow' %}
+       	   <a href="/yellow" class="btn btn-block btn-lg btn-primary" style="height:100%" role="button">Yellow</a>
+	   {% else %}
+           <a href="/yellow" class="btn btn-block btn-lg btn-default" style="height:100%" role="button">Yellow</a> 
+	   {% endif %}
+	 </div>
+	 <div class="col-xs-4" style="height:100%">
+	   {% if active == 'magenta' %}
+       	   <a href="/magenta" class="btn btn-block btn-lg btn-primary" style="height:100%" role="button">Magenta</a>
+	   {% else %}
+           <a href="/magenta" class="btn btn-block btn-lg btn-default" style="height:100%" role="button">Magenta</a> 
+	   {% endif %}
+ 	 </div>
+       </div>
+       <div class="row" style="height:20%">
+         <div class="col-xs-12" style="height:100%">
+	   {% if active == 'white' %}
+       	   <a href="/white" class="btn btn-block btn-lg btn-primary" style="height:100%" role="button">White</a>
+	   {% else %}
+           <a href="/white" class="btn btn-block btn-lg btn-default" style="height:100%" role="button">White</a> 
+	   {% endif %}
+	 </div>
+       </div>
+</body>
+</html>
+
+

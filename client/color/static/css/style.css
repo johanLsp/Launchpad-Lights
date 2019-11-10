@@ -1,0 +1,83 @@
+html, body {
+  display:-webkit-box;
+  display:-webkit-flex;
+  display:-ms-flexbox;
+  display:flex;
+  flex-direction: column;
+  height: 100%;
+}
+svg { 
+  margin: auto;
+  position: relative;
+}
+#button {
+  cursor: pointer;
+}
+.graphe_container {
+  -moz-transform-origin: 160px 160px;
+  -ms-transform-origin:  160px 160px;
+  -o-transform-origin: 160px 160px;
+  -webkit-transform-origin:  160px 160px;
+  transform-origin: 160px 160px;
+}
+rect,circle {
+  user-select: none;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+}
+
+.lbl {
+  position: relative;
+  display: block;
+  height: 20px;
+  width: 44px;
+  background: #898989;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lbl:after {
+  position: absolute;
+  left: -2px;
+  top: -3px;
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 100px;
+  background: #fff;
+  box-shadow: 0px 3px 3px rgba(0,0,0,0.05);
+  content: '';
+  transition: all 0.3s ease;
+}
+
+.lbl:active:after { transform: scale(1.15, 0.85); }
+
+.cbx:checked ~ label { background: #6fbeb5; }
+
+.cbx:checked ~ label:after {
+  left: 20px;
+  background: #179588;
+}
+
+.cbx:disabled ~ label {
+  background: #d5d5d5;
+  pointer-events: none;
+}
+
+.cbx:disabled ~ label:after { background: #bcbdbc; }
+
+.container {
+  position: absolute;
+  top: 250px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.row {
+  heigth: 50px;
+  flex-direction: row;
+  margin-bottom: 40px;
+}
+
+.hidden { display: none; }

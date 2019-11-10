@@ -1,0 +1,556 @@
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["cytoscape"] = factory();
+	else
+		root["cytoscape"] = factory();
+})(typeof self !== 'undefined' ? self : this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/*global HTMLElement DocumentTouch */
+
+var window = __webpack_require__(3);
+var navigator = window ? window.navigator : null;
+var document = window ? window.document : null;
+
+var typeofstr = _typeof('');
+var typeofobj = _typeof({});
+var typeoffn = _typeof(function () {});
+var typeofhtmlele = typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement);
+
+var instanceStr = function instanceStr(obj) {
+  return obj && obj.instanceString && is.fn(obj.instanceString) ? obj.instanceString() : null;
+};
+
+var is = {
+  defined: function defined(obj) {
+    return obj != null; // not undefined or null
+  },
+
+  string: function string(obj) {
+    return obj != null && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) == typeofstr;
+  },
+
+  fn: function fn(obj) {
+    return obj != null && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === typeoffn;
+  },
+
+  array: function array(obj) {
+    return Array.isArray ? Array.isArray(obj) : obj != null && obj instanceof Array;
+  },
+
+  plainObject: function plainObject(obj) {
+    return obj != null && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === typeofobj && !is.array(obj) && obj.constructor === Object;
+  },
+
+  object: function object(obj) {
+    return obj != null && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === typeofobj;
+  },
+
+  number: function number(obj) {
+    return obj != null && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === _typeof(1) && !isNaN(obj);
+  },
+
+  integer: function integer(obj) {
+    return is.number(obj) && Math.floor(obj) === obj;
+  },
+
+  bool: function bool(obj) {
+    return obj != null && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === _typeof(true);
+  },
+
+  htmlElement: function htmlElement(obj) {
+    if ('undefined' === typeofhtmlele) {
+      return undefined;
+    } else {
+      return null != obj && obj instanceof HTMLElement;
+    }
+  },
+
+  elementOrCollection: function elementOrCollection(obj) {
+    return is.element(obj) || is.collection(obj);
+  },
+
+  element: function element(obj) {
+    return instanceStr(obj) === 'collection' && obj._private.single;
+  },
+
+  collection: function collection(obj) {
+    return instanceStr(obj) === 'collection' && !obj._private.single;
+  },
+
+  core: function core(obj) {
+    return instanceStr(obj) === 'core';
+  },
+
+  style: function style(obj) {
+    return instanceStr(obj) === 'style';
+  },
+
+  stylesheet: function stylesheet(obj) {
+    return instanceStr(obj) === 'stylesheet';
+  },
+
+  event: function event(obj) {
+    return instanceStr(obj) === 'event';
+  },
+
+  thread: function thread(obj) {
+    return instanceStr(obj) === 'thread';
+  },
+
+  fabric: function fabric(obj) {
+    return instanceStr(obj) === 'fabric';
+  },
+
+  emptyString: function emptyString(obj) {
+    if (obj === undefined || obj === null) {
+      // null is empty
+      return true;
+    } else if (obj === '' || obj.match(/^\s+$/)) {
+      return true; // empty string is empty
+    }
+
+    return false; // otherwise, we don't know what we've got
+  },
+
+  nonemptyString: function nonemptyString(obj) {
+    if (obj && is.string(obj) && obj !== '' && !obj.match(/^\s+$/)) {
+      return true;
+    }
+
+    return false;
+  },
+
+  domElement: function domElement(obj) {
+    if (typeof HTMLElement === 'undefined') {
+      return false; // we're not in a browser so it doesn't matter
+    } else {
+      return obj instanceof HTMLElement;
+    }
+  },
+
+  boundingBox: function boundingBox(obj) {
+    return is.plainObject(obj) && is.number(obj.x1) && is.number(obj.x2) && is.number(obj.y1) && is.number(obj.y2);
+  },
+
+  promise: function promise(obj) {
+    return is.object(obj) && is.fn(obj.then);
+  },
+
+  touch: function touch() {
+    return window && ('ontouchstart' in window || window.DocumentTouch && document instanceof DocumentTouch);
+  },
+
+  gecko: function gecko() {
+    return window && (typeof InstallTrigger !== 'undefined' || 'MozAppearance' in document.documentElement.style);
+  },
+
+  webkit: function webkit() {
+    return window && (typeof webkitURL !== 'undefined' || 'WebkitAppearance' in document.documentElement.style);
+  },
+
+  chromium: function chromium() {
+    return window && typeof chrome !== 'undefined';
+  },
+
+  khtml: function khtml() {
+    return navigator && navigator.vendor.match(/kde/i); // probably a better way to detect this...
+  },
+
+  khtmlEtc: function khtmlEtc() {
+    return is.khtml() || is.webkit() || is.chromium();
+  },
+
+  ms: function ms() {
+    return navigator && navigator.userAgent.match(/msie|trident|edge/i); // probably a better way to detect this...
+  },
+
+  windows: function windows() {
+    return navigator && navigator.appVersion.match(/Win/i);
+  },
+
+  mac: function mac() {
+    return navigator && navigator.appVersion.match(/Mac/i);
+  },
+
+  linux: function linux() {
+    return navigator && navigator.appVersion.match(/Linux/i);
+  },
+
+  unix: function unix() {
+    return navigator && navigator.appVersion.match(/X11/i);
+  }
+};
+
+module.exports = is;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/*global console */
+
+var is = __webpack_require__(0);
+var math = __webpack_require__(2);
+
+var util = {
+
+  MAX_INT: Number.MAX_SAFE_INTEGER || 9007199254740991,
+
+  trueify: function trueify() {
+    return true;
+  },
+
+  falsify: function falsify() {
+    return false;
+  },
+
+  zeroify: function zeroify() {
+    return 0;
+  },
+
+  noop: function noop() {},
+
+  error: function error(msg) {
+    /* eslint-disable */
+    if (console.error) {
+      console.error.apply(console, arguments);
+
+      if (console.trace) {
+        console.trace();
+      }
+    } else {
+      console.log.apply(console, arguments);
+
+      if (console.trace) {
+        console.trace();
+      }
+    }
+    /* eslint-enable */
+  },
+
+  clone: function clone(obj) {
+    return this.extend({}, obj);
+  },
+
+  // gets a shallow copy of the argument
+  copy: function copy(obj) {
+    if (obj == null) {
+      return obj;
+    }if (is.array(obj)) {
+      return obj.slice();
+    } else if (is.plainObject(obj)) {
+      return this.clone(obj);
+    } else {
+      return obj;
+    }
+  },
+
+  copyArray: function copyArray(arr) {
+    return arr.slice();
+  },
+
+  clonePosition: function clonePosition(pos) {
+    return { x: pos.x, y: pos.y };
+  },
+
+  uuid: function uuid(a, b // placeholders
+  ) {
+    for ( // loop :)
+    b = a = ''; // b - result , a - numeric letiable
+    a++ < 36; //
+    b += a * 51 & 52 // if "a" is not 9 or 14 or 19 or 24
+    ? //  return a random number or 4
+    (a ^ 15 // if "a" is not 15
+    ? // genetate a random number from 0 to 15
+    8 ^ Math.random() * (a ^ 20 ? 16 : 4) // unless "a" is 20, in which case a random number from 8 to 11
+    : 4 //  otherwise 4
+    ).toString(16) : '-' //  in other cases (if "a" is 9,14,19,24) insert "-"
+    ) {}
+    return b;
+  }
+
+};
+
+util.makeBoundingBox = math.makeBoundingBox.bind(math);
+
+util._staticEmptyObject = {};
+
+util.staticEmptyObject = function () {
+  return util._staticEmptyObject;
+};
+
+util.extend = Object.assign != null ? Object.assign.bind(Object) : function (tgt) {
+  var args = arguments;
+
+  for (var i = 1; i < args.length; i++) {
+    var obj = args[i];
+
+    if (obj == null) {
+      continue;
+    }
+
+    var keys = Object.keys(obj);
+
+    for (var j = 0; j < keys.length; j++) {
+      var k = keys[j];
+
+      tgt[k] = obj[k];
+    }
+  }
+
+  return tgt;
+};
+
+util.assign = util.extend;
+
+util.default = function (val, def) {
+  if (val === undefined) {
+    return def;
+  } else {
+    return val;
+  }
+};
+
+util.removeFromArray = function (arr, ele, manyCopies) {
+  for (var i = arr.length; i >= 0; i--) {
+    if (arr[i] === ele) {
+      arr.splice(i, 1);
+
+      if (!manyCopies) {
+        break;
+      }
+    }
+  }
+};
+
+util.clearArray = function (arr) {
+  arr.splice(0, arr.length);
+};
+
+util.push = function (arr, otherArr) {
+  for (var i = 0; i < otherArr.length; i++) {
+    var el = otherArr[i];
+
+    arr.push(el);
+  }
+};
+
+util.getPrefixedProperty = function (obj, propName, prefix) {
+  if (prefix) {
+    propName = this.prependCamel(prefix, propName); // e.g. (labelWidth, source) => sourceLabelWidth
+  }
+
+  return obj[propName];
+};
+
+util.setPrefixedProperty = function (obj, propName, prefix, value) {
+  if (prefix) {
+    propName = this.prependCamel(prefix, propName); // e.g. (labelWidth, source) => sourceLabelWidth
+  }
+
+  obj[propName] = value;
+};
+
+[__webpack_require__(21), __webpack_require__(22), { memoize: __webpack_require__(13) }, __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(27)].forEach(function (req) {
+  util.extend(util, req);
+});
+
+module.exports = util;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var math = {};
+
+math.arePositionsSame = function (p1, p2) {
+  return p1.x === p2.x && p1.y === p2.y;
+};
+
+math.copyPosition = function (p) {
+  return { x: p.x, y: p.y };
+};
+
+math.modelToRenderedPosition = function (p, zoom, pan) {
+  return {
+    x: p.x * zoom + pan.x,
+    y: p.y * zoom + pan.y
+  };
+};
+
+math.renderedToModelPosition = function (p, zoom, pan) {
+  return {
+    x: (p.x - pan.x) / zoom,
+    y: (p.y - pan.y) / zoom
+  };
+};
+
+math.array2point = function (arr) {
+  return {
+    x: arr[0],
+    y: arr[1]
+  };
+};
+
+math.deg2rad = function (deg) {
+  return Math.PI * deg / 180;
+};
+
+math.getAngleFromDisp = function (dispX, dispY) {
+  return Math.atan2(dispY, dispX) - Math.PI / 2;
+};
+
+math.log2 = Math.log2 || function (n) {
+  return Math.log(n) / Math.log(2);
+};
+
+math.signum = function (x) {
+  if (x > 0) {
+    return 1;
+  } else if (x < 0) {
+    return -1;
+  } else {
+    return 0;
+  }
+};
+
+math.dist = function (p1, p2) {
+  return Math.sqrt(math.sqdist(p1, p2));
+};
+
+math.sqdist = function (p1, p2) {
+  var dx = p2.x - p1.x;
+  var dy = p2.y - p1.y;
+
+  return dx * dx + dy * dy;
+};
+
+// from http://en.wikipedia.org/wiki/BÃ©zier_curve#Quadratic_curves
+math.qbezierAt = function (p0, p1, p2, t) {
+  return (1 - t) * (1 - t) * p0 + 2 * (1 - t) * t * p1 + t * t * p2;
+};
+
+math.qbezierPtAt = function (p0, p1, p2, t) {
+  return {
+    x: math.qbezierAt(p0.x, p1.x, p2.x, t),
+    y: math.qbezierAt(p0.y, p1.y, p2.y, t)
+  };
+};
+
+math.lineAt = function (p0, p1, t, d) {
+  var vec = {
+    x: p1.x - p0.x,
+    y: p1.y - p0.y
+  };
+
+  var vecDist = math.dist(p0, p1);
+
+  var normVec = {
+    x: vec.x / vecDist,
+    y: vec.y / vecDist
+  };
+
+  t = t == null ? 0 : t;
+
+  d = d != null ? d : t * vecDist;
+
+  return {
+    x: p0.x + normVec.x * d,
+    y: p0.y + normVec.y * d
+  };
+};
+
+math.lineAtDist = function (p0, p1, d) {
+  return math.lineAt(p0, p1, undefined, d);
+};
+
+// get angle at A via cosine law
+math.triangleAngle = function (A, B, C) {
+  var a = math.dist(B, C);
+  var b = math.dist(A, C);
+  var c = math.dist(A, B);
+
+
