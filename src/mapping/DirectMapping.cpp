@@ -4,8 +4,8 @@
 #include <functional>
 #include <cmath>
 
-DirectMapping::DirectMapping(Launchpad* launchpad, Stripe* stripe)
-    : Mapping(launchpad, stripe), m_num_pressed(0) {}
+DirectMapping::DirectMapping(Launchpad* launchpad, Light* light)
+    : Mapping(launchpad, light), m_num_pressed(0) {}
 
 void DirectMapping::start() {
   m_launchpad->setAllLed(0);
@@ -37,13 +37,13 @@ void DirectMapping::noteOn(int channel, int note) {
   int r = 2 * floor(y / 4) + floor(x / 4);
   int g = y % 4;
   int b = x % 4;
-  m_stripe->setColor(255.0 * r / 3, 255.0 * g / 3, 255.0 * b / 3);
+  m_light->setColor(255.0 * r / 3, 255.0 * g / 3, 255.0 * b / 3);
 }
 
 void DirectMapping::noteOff(int channel, int note) {
   if (note > 100) return;
   m_num_pressed--;
   if (m_num_pressed == 0) {
-    m_stripe->setColor(0, 0, 0);
+    m_light->setColor(0, 0, 0);
   }
 }

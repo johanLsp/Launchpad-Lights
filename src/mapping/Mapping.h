@@ -4,15 +4,15 @@
 
 #include <vector>
 
-#include "Stripe.h"
+#include "lights/Light.h"
 #include "device/Launchpad.h"
 
 #define NOTE_MAPPING 104
 
 class Mapping {
  public:
-  Mapping(Launchpad* launchpad, Stripe* stripe)
-      : m_launchpad(launchpad), m_stripe(stripe) {}
+  Mapping(Launchpad* launchpad, Light* light)
+      : m_launchpad(launchpad), m_light(light) {}
 
   virtual void noteOn(int channel, int note) = 0;
   virtual void noteOff(int channel, int note) = 0;
@@ -22,7 +22,7 @@ class Mapping {
 
  protected:
   Launchpad* m_launchpad;
-  Stripe* m_stripe;
+  Light* m_light;
 };
 
 #endif  // SRC_MAPPING_MAPPING_H_

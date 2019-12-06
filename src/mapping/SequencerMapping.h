@@ -15,6 +15,7 @@
 #include <boost/chrono.hpp>
 
 #include "ableton/Link.hpp"
+#include "lights/Light.h"
 #include "mapping/Mapping.h"
 #include "mapping/page/SequencerPage.h"
 #include "mapping/page/SnakePage.h"
@@ -27,7 +28,7 @@ class SequencerMapping : public Mapping {
   enum Mode {SequencerMode, ColorMode};
 
  public:
-  SequencerMapping(Launchpad* launchpad, Stripe* stripe);
+  SequencerMapping(Launchpad* launchpad, Light* light);
   ~SequencerMapping();
 
   void noteOn(int channel, int note) override;

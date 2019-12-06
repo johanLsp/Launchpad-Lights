@@ -2,11 +2,12 @@
 #ifndef SRC_MAPPING_DIRECTMAPPING_H_
 #define SRC_MAPPING_DIRECTMAPPING_H_
 
+#include "lights/Light.h"
 #include "mapping/Mapping.h"
 
 class DirectMapping : public Mapping {
  public:
-  DirectMapping(Launchpad* launchpad, Stripe* stripe);
+  DirectMapping(Launchpad* launchpad, Light* light);
   void noteOn(int channel, int note) override;
   void noteOff(int channel, int note) override;
   void setColors(const std::vector<Color>& colors) override {}

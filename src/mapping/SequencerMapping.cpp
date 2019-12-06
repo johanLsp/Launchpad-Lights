@@ -5,8 +5,8 @@
 
 #include <boost/bind.hpp>
 
-SequencerMapping::SequencerMapping(Launchpad* launchpad, Stripe* stripe)
-    : Mapping(launchpad, stripe),
+SequencerMapping::SequencerMapping(Launchpad* launchpad, Light* light)
+    : Mapping(launchpad, light),
       m_active(false),
       m_bpm(120),
       m_syncDelayms(1000),
@@ -61,9 +61,9 @@ void SequencerMapping::run() {
 
       if (m_strobeOn) {
         if (m_strobeState == 0) {
-          m_stripe->setColor(Color::White);
+          m_light->setColor(Color::White);
         } else if (m_strobeState == 3) {
-          m_stripe->setColor(Color::Black);
+          m_light->setColor(Color::Black);
         }
         m_strobeState++;
         if (m_strobeState == 6) {
@@ -71,7 +71,7 @@ void SequencerMapping::run() {
         }
       } else {
         Color color = m_sequencerPage->getColor(colorIndex);
-        m_stripe->setColor(color);
+        m_light->setColor(color);
       }
       usleep(10000);
     } else {
@@ -95,9 +95,9 @@ void SequencerMapping::noteOn(int channel, int note) {
     m_sequencerPage->speedUp();
     refresh();
   } else if (note == NOTE_LIGHT_INTENSITY) {
-    double intensity = m_stripe->getIntensity() + 0.25;
+    double intensity = m_light->getIntensity() + 0.25;
     if (intensity > 1.0) intensity -= 1;
-    m_stripe->setIntensity(intensity);
+    m_light->setIntensity(intensity);
     m_launchpad->setLed(NOTE_LIGHT_INTENSITY,
                      Color(255 * intensity, 255 * intensity,  255 * intensity));
   } else if (note == NOTE_DUMMY3) {
@@ -182,7 +182,7 @@ void SequencerMapping::refresh() {
     m_launchpad->flashLed(NOTE_SPEED_DOWN, Color::Grey);
     m_launchpad->flashLed(NOTE_SPEED_UP, Color::Grey);
 
-    double intensity = m_stripe->getIntensity();
+    double intensity = m_light->getIntensity();
     m_launchpad->setLed(NOTE_LIGHT_INTENSITY,
                      Color(255 * intensity, 255 * intensity, 255 * intensity));
     m_launchpad->setLed(NOTE_STROBE, Color::Grey);

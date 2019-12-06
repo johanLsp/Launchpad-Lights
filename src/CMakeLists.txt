@@ -1,9 +1,10 @@
 
 set(SOURCE_FILES 
     main.cpp
-    Stripe.cpp
     device/Device.cpp
     device/Launchpad.cpp
+    lights/LedPwm.cpp
+    lights/LedRemote.cpp
     mapping/DirectMapping.cpp
     mapping/SequencerMapping.cpp
     mapping/page/ColorPage.cpp

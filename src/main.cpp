@@ -2,6 +2,9 @@
 #include <csignal>
 
 #include "device/Launchpad.h"
+#include "lights/LightGroup.h"
+#include "lights/LedPwm.h"
+#include "lights/LedRemote.h"
 #include "mapping/DirectMapping.h"
 #include "mapping/SequencerMapping.h"
 #include "transport/ColorServer.h"
@@ -21,24 +24,28 @@ void run() {
 }
 
 int main(int argc, char** argv) {
-  Stripe stripe;
+  LedPwm ledPwm;
+  LedRemote ledRemote;
+  LightGroup group;
+  group.addLight(&ledRemote);
+  group.addLight(&ledPwm);
 
-  MidiServer midi;
+  MidiLocal midi;
   ColorServer colorServer;
   Launchpad launchpad(&midi);
 
-  DirectMapping direct(&launchpad, &stripe);
-  SequencerMapping sequencer(&launchpad, &stripe);
+  DirectMapping direct(&launchpad, &group);
+  SequencerMapping sequencer(&launchpad, &group);
 
-  stripe.setColor(127, 127, 127);
+  group.setColor(127, 127, 127);
 
   if (launchpad.isConnected()) {
     launchpad.addMapping(&direct);
     launchpad.addMapping(&sequencer);
-    launchpad.setAllLed(0);
-    midi.start();
+    //launchpad.setAllLed(0);
+    //midi.start();
     run();
-    midi.stop();
+    //midi.stop();
   } else {
     std::cout << "Launchpad not connected, fallback to server mode"
               << std::endl;
