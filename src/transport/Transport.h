@@ -16,7 +16,7 @@ class Transport {
   Transport() : m_device(nullptr), m_connected(false) {}
   void setDevice(Device* device) { m_device = device; }
 
-  bool isConnected() { return m_connected; }
+  virtual bool isConnected() { return m_connected; }
 
   virtual void send(const ustring& message) = 0;
 

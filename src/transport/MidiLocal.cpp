@@ -12,35 +12,48 @@ void receive(double timestamp, std::vector<unsigned char>* message,
 
 MidiLocal::MidiLocal() {
   m_output = new RtMidiOut();
-  unsigned int nPorts = m_output->getPortCount();
-
-  bool connected = false;
-  for (int i = 0; i < nPorts; i++) {
-    std::string name = m_output->getPortName(i);
-    if (name.compare(0, 9, "Launchpad") == 0) {
-      std::cout << "Output : " << name << std::endl;
-      m_output->openPort(i);
-      connected = true;
-    }
-  }
-  if (!connected) return;
   m_input = new RtMidiIn();
-  // Check available ports.
-  nPorts = m_input->getPortCount();
-  for (int i = 0; i < nPorts; i++) {
-    std::string name = m_input->getPortName(i);
-    if (name.compare(0, 9, "Launchpad") == 0) {
-      m_input->openPort(i);
-      m_input->setCallback(&::receive, this);
-        connected = true;
-    }
-  }
-  m_connected = connected;
+  m_input->setCallback(&::receive, this);
+  connect();
 }
 
 MidiLocal::~MidiLocal() {
   delete m_output;
   delete m_input;
+}
+
+bool MidiLocal::isConnected() {
+  return connect();
+}
+
+bool MidiLocal::connect() {
+  int idx_in = findLaunchpad(m_input);
+  int idx_out = findLaunchpad(m_output);
+
+  if (idx_in != -1 && idx_out != -1) {
+    if (m_connected) return true;
+    m_input->openPort(idx_in);
+    m_output->openPort(idx_out);
+    m_connected = true;
+    return true;
+  }
+
+  if (!m_connected) return false;
+
+  m_input->closePort();
+  m_output->closePort();
+  m_connected = false;
+  return false;
+}
+
+int MidiLocal::findLaunchpad(RtMidi* midi) {
+  for (int i = 0; i < midi->getPortCount(); i++) {
+    std::string name = midi->getPortName(i);
+    if (name.compare(0, 9, "Launchpad") == 0) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 void MidiLocal::send(const ustring& message) {

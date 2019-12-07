@@ -13,10 +13,14 @@ class MidiLocal : public Midi {
   MidiLocal();
   ~MidiLocal();
 
+  bool isConnected() override;
   void send(const ustring& message) override;
-  void receiveCallback(const ustring& message) { receive(message); }
+  void receiveCallback(cons ustring& message) { receive(message); }
 
  private:
+  bool connect();
+  int findLaunchpad(RtMidi* midi);
+
   RtMidiIn* m_input;
   RtMidiOut* m_output;
 };

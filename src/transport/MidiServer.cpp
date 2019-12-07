@@ -19,7 +19,7 @@ MidiServer::MidiServer()
 
   // Disable the ZeroMQ signal handler to use the one defined in main.cpp
   zsys_handler_set(NULL);
-  m_connected = true;
+  m_connected = false;
 }
 
 void MidiServer::setupBeacon() {
@@ -66,13 +66,13 @@ void MidiServer::stop() {
   if (!m_running) return;
   m_running = false;
   zloop_reader_end(m_reader, m_subscriber);
+  zloop_destroy(&m_reader);
   m_thread->join();
   delete m_thread;
 }
 
 MidiServer::~MidiServer() {
   stop();
-  zloop_destroy(&m_reader);
   zactor_destroy(&m_beacon);
   zactor_destroy(&m_proxy);
   zsock_destroy(&m_subscriber);
