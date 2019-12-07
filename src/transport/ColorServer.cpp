@@ -2,7 +2,6 @@
 #include "transport/ColorServer.h"
 
 #include <iostream>
-#include <thread>
 #include <vector>
 
 ColorServer::ColorServer()
@@ -14,6 +13,8 @@ ColorServer::ColorServer()
 void ColorServer::run() {
   m_running = true;
   while (m_running) {
+    zpoller_t* poller = zpoller_new(m_server, NULL);
+    if (!zpoller_wait(poller, 200)) continue;
     char *message = zstr_recv(m_server);
     ustring message_str(reinterpret_cast<unsigned char*>(message));
     receive(message_str);
@@ -22,11 +23,14 @@ void ColorServer::run() {
 }
 
 void ColorServer::start() {
-  std::thread serverThread(&ColorServer::run, this);
+  m_thread = new std::thread(&ColorServer::run, this);
 }
 
 void ColorServer::stop() {
+  if (!m_running) return;
   m_running = false;
+  m_thread->join();
+  delete m_thread;
 }
 
 ColorServer::~ColorServer() {

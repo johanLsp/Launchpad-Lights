@@ -2,6 +2,7 @@
 #ifndef SRC_TRANSPORT_COLORSERVER_H_
 #define SRC_TRANSPORT_COLORSERVER_H_
 
+#include <thread>
 #include <czmq.h>
 #include "transport/Transport.h"
 
@@ -23,6 +24,7 @@ class ColorServer : public Transport {
  private:
   bool m_running;
   zsock_t* m_server;
+  std::thread* m_thread;
 };
 
 #endif  // SRC_TRANSPORT_COLORSERVER_H_
