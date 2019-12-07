@@ -33,6 +33,6 @@ void Device::changeMapping() {
   m_mappings[m_mapping_idx]->start();
 }
 
-void Device::start() {
-  m_mappings[m_mapping_idx]->start();
+void Device::refresh() {
+  m_mappings[m_mapping_idx]->refresh();
 }

@@ -23,38 +23,71 @@ void run() {
   }
 }
 
+enum Connected {None, Local, Remote, Color};
+
 int main(int argc, char** argv) {
   LedPwm ledPwm;
   LedRemote ledRemote;
   LightGroup group;
   group.addLight(&ledRemote);
   group.addLight(&ledPwm);
+  group.setColor(Color::White);
 
-  MidiLocal midi;
+  MidiLocal midiLocal;
+  Launchpad launchpadLocal(&midiLocal);
+
+  MidiServer midiServer;
+  Launchpad launchpadServer(&midiServer);
+
   ColorServer colorServer;
-  Launchpad launchpad(&midi);
+  Launchpad launchpadColor(&colorServer);
 
-  DirectMapping direct(&launchpad, &group);
-  SequencerMapping sequencer(&launchpad, &group);
+  DirectMapping direct(&launchpadColor, &group);
+  SequencerMapping sequencer(&launchpadColor, &group);
 
-  group.setColor(127, 127, 127);
+  launchpadLocal.addMapping(&sequencer);
+  launchpadServer.addMapping(&sequencer);
+  launchpadColor.addMapping(&sequencer);
 
-  if (launchpad.isConnected()) {
-    launchpad.addMapping(&direct);
-    launchpad.addMapping(&sequencer);
-    //launchpad.setAllLed(0);
-    //midi.start();
-    run();
-    //midi.stop();
-  } else {
-    std::cout << "Launchpad not connected, fallback to server mode"
-              << std::endl;
-    launchpad = Launchpad(&colorServer);
-    launchpad.addMapping(&sequencer);
-    colorServer.start();
-    // TODO: Add a timeout to the ZeroMQ receive call so the
-    // server thread does not block
-    //serverThread.join();
+  launchpadLocal.addMapping(&direct);
+  launchpadServer.addMapping(&direct);
+
+  Connected connected = None;
+
+  signal(SIGINT, signalHandler);
+  while (!done) {
+    if (launchpadLocal.isConnected()) {
+      if (connected != Local) {
+        colorServer.stop();
+        midiServer.stop();
+        direct.setLaunchpad(&launchpadLocal);
+        sequencer.setLaunchpad(&launchpadLocal);
+        connected = Local;
+        std::cout << "Local Launchpad connected" << std::endl;
+      }
+    } else if (launchpadServer.isConnected()) {
+      if (connected != Remote) {
+        colorServer.stop();
+        midiServer.start();
+        direct.setLaunchpad(&launchpadServer);
+        sequencer.setLaunchpad(&launchpadServer);
+        connected = Remote;
+        std::cout << "Remote Launchpad connected" << std::endl;
+      }
+    } else {
+      if (connected != Color) {
+        colorServer.start();
+        midiServer.stop();
+        direct.setLaunchpad(&launchpadColor);
+        sequencer.setLaunchpad(&launchpadColor);
+        connected = Color;
+        std::cout << "Color server connected" << std::endl;
+      }
+    }
+    sleep(1);
   }
+  midiServer.stop();
+  colorServer.stop();
+
   return 0;
 }

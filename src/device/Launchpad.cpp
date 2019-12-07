@@ -45,7 +45,7 @@ void Launchpad::receive(Transport::Type type, const ustring& message) {
       switch (command) {
         case 105:
           std::cout << "Refresh" << std::endl;
-          start();
+          refresh();
           break;
         case 127:
           if (note == 104) {

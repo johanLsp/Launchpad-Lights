@@ -13,6 +13,7 @@ class DirectMapping : public Mapping {
   void setColors(const std::vector<Color>& colors) override {}
   void start() override;
   void stop() override;
+  void refresh() override;
 
  private:
     int m_num_pressed;

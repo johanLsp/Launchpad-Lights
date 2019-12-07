@@ -36,13 +36,15 @@ class SequencerMapping : public Mapping {
   void start() override;
   void stop() override;
   void setColors(const std::vector<Color>& colors) override;
+  void refresh() override;
+  void setLaunchpad(Launchpad* launchpad) override;
+
 
  private:
     void run();
     void sync();
     void setBPM(double bpm) { m_bpm = bpm; }
     void pageClosed();
-    void refresh();
 
     // Mapping pages
     Page* m_currentPage;

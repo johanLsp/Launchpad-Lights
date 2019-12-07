@@ -14,11 +14,17 @@ class Mapping {
   Mapping(Launchpad* launchpad, Light* light)
       : m_launchpad(launchpad), m_light(light) {}
 
+  virtual void setLaunchpad(Launchpad* launchpad) {
+    m_launchpad = launchpad;
+    refresh();
+  }
+
   virtual void noteOn(int channel, int note) = 0;
   virtual void noteOff(int channel, int note) = 0;
   virtual void setColors(const std::vector<Color>& colors) = 0;
   virtual void start() = 0;
   virtual void stop() = 0;
+  virtual void refresh() = 0;
 
  protected:
   Launchpad* m_launchpad;

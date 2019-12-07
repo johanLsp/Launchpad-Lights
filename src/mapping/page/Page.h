@@ -11,6 +11,10 @@ class Page {
   virtual void refresh() = 0;
   virtual void setCurrent(int index) = 0;
 
+  virtual void setLaunchpad(Launchpad* launchpad) {
+    m_launchpad = launchpad;
+  }
+
  protected:
   Launchpad* m_launchpad;
 };

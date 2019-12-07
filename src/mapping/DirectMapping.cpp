@@ -7,7 +7,7 @@
 DirectMapping::DirectMapping(Launchpad* launchpad, Light* light)
     : Mapping(launchpad, light), m_num_pressed(0) {}
 
-void DirectMapping::start() {
+void DirectMapping::refresh() {
   m_launchpad->setAllLed(0);
   for (uint8_t r = 0; r < 4; r++) {
     for (uint8_t g = 0; g < 4; g++) {
@@ -22,7 +22,11 @@ void DirectMapping::start() {
     }
   }
   m_launchpad->pulseLed(NOTE_MAPPING, 5);
+}
+
+void DirectMapping::start() {
   m_num_pressed = 0;
+  refresh();
 }
 
 void DirectMapping::stop() {

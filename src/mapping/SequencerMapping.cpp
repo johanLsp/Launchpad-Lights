@@ -41,6 +41,13 @@ SequencerMapping::~SequencerMapping() {
   delete m_link;
 }
 
+void SequencerMapping::setLaunchpad(Launchpad* launchpad) {
+  m_launchpad = launchpad;
+  m_sequencerPage->setLaunchpad(launchpad);
+  m_snakePage->setLaunchpad(launchpad);
+  refresh();
+}
+
 
 void SequencerMapping::run() {
   int previousIndex = -1;
