@@ -1,10 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys, time
 import signal
 import threading
 import zmq
-import wiringpi
 import json
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
@@ -37,14 +36,14 @@ class Stripe():
     def enable(self, enable):
         self.is_enabled = enable
         if enable:
-            zmq_socket.send("Colors %s" % (json.dumps(self.colors)))
+            zmq_socket.send_string("Colors %s" % (json.dumps(self.colors)))
         else:
-            zmq_socket.send("Colors %s" % (json.dumps([Color(0, 0, 0)])))
+            zmq_socket.send_string("Colors %s" % (json.dumps([Color(0, 0, 0)])))
 
     def setColorRGB(self, red, green, blue):
         self.colors = [Color(red, green, blue)]
         if self.is_enabled:
-            zmq_socket.send("Colors %s" % (json.dumps(self.colors)))
+            zmq_socket.send_string("Colors %s" % (json.dumps(self.colors)))
 
     def setColors(self, newColors):
         colors = []
@@ -62,7 +61,7 @@ class Stripe():
             colors.append(Color(red, green, blue))
         self.colors = colors
         if self.is_enabled:
-            zmq_socket.send("Colors %s" % (json.dumps(colors)))
+            zmq_socket.send_string("Colors %s" % (json.dumps(colors)))
 
 stripe = Stripe()
 
