@@ -70,6 +70,8 @@ void MidiClient::attachMidi() {
       }
       m_midiConnected = connected;
     }
+    // Set the connection status to the server.
+    forwardRemote(m_midiConnected ? "Connected" : "Disconnected");
     sleep(1);
   }
 }

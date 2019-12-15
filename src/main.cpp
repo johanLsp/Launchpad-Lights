@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
 
   MidiServer midiServer;
   Launchpad launchpadServer(&midiServer);
+  midiServer.start();
 
   ColorServer colorServer;
   Launchpad launchpadColor(&colorServer);
@@ -58,6 +59,7 @@ int main(int argc, char** argv) {
   while (!done) {
     if (launchpadLocal.isConnected()) {
       if (connected != Local) {
+        // Stop the two servers that have lower priority.
         colorServer.stop();
         midiServer.stop();
         direct.setLaunchpad(&launchpadLocal);
@@ -77,7 +79,7 @@ int main(int argc, char** argv) {
     } else {
       if (connected != Color) {
         colorServer.start();
-        midiServer.stop();
+        midiServer.start();
         direct.setLaunchpad(&launchpadColor);
         sequencer.setLaunchpad(&launchpadColor);
         connected = Color;

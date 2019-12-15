@@ -3,7 +3,6 @@
 
 void Transport::receive(const std::string& message) {
   if (m_device) {
-    m_connected = true;
     m_device->receive(type(), message);
   }
 }

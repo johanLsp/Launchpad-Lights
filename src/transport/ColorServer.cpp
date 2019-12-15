@@ -22,6 +22,7 @@ void ColorServer::run() {
 }
 
 void ColorServer::start() {
+  if (m_running) return;
   m_thread = new std::thread(&ColorServer::run, this);
 }
 

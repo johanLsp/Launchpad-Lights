@@ -25,6 +25,7 @@ class MidiServer : public Midi {
 
  private:
   static int receiveCallback(zloop_t* loop, zsock_t* reader, void* arg);
+  void receive(const std::string& message) override;
   void setupBeacon();
 
   bool m_running;

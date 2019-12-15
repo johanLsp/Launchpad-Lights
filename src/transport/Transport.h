@@ -20,7 +20,7 @@ class Transport {
   virtual void send(const std::string& message) = 0;
 
  protected:
-  void receive(const std::string& message);
+  virtual void receive(const std::string& message);
   virtual Type type() { return Type::INVALID; }
 
   bool m_connected;

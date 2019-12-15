@@ -18,7 +18,7 @@ MidiServer::MidiServer()
   setupBeacon();
 
   // Disable the ZeroMQ signal handler to use the one defined in main.cpp
-  zsys_handler_set(NULL);
+  //zsys_handler_set(NULL);
   m_connected = false;
 }
 
@@ -34,14 +34,26 @@ void MidiServer::setupBeacon() {
 int MidiServer::receiveCallback(zloop_t* loop, zsock_t* reader, void* arg) {
   MidiServer* server = reinterpret_cast<MidiServer*>(arg);
   zframe_t* frame = zframe_recv(reader);
-  // Strip the topic.
-  if (zframe_size(frame) < strlen("MidiIn ")) return -1;
   const char* data = reinterpret_cast<const char*>(zframe_data(frame));
-  std::string message(data + strlen("MidiIn "),
-                      zframe_size(frame) - strlen("MidiIn "));
-  server->receive(message);
+  std::string message(data, zframe_size(frame));
+  if (message.rfind("MidiIn ", 0) != 0) {
+      std::cout << "Invalid message: " << message << std::endl;
+      return -1;
+  }
+  server->receive(message.substr(strlen("MidiIn ")));
   zframe_destroy(&frame);
   return 0;
+}
+
+void MidiServer::receive(const std::string& message) {
+  // Intercept connection status.
+  if (message.find("Connected") != std::string::npos) {
+    m_connected = true;
+  } else if (message.find("Disconnected") != std::string::npos) {
+    m_connected = false;
+  } else {
+    Transport::receive(message);
+  }
 }
 
 void MidiServer::send(const std::string& message) {
@@ -52,6 +64,7 @@ void MidiServer::send(const std::string& message) {
 }
 
 void MidiServer::run() {
+  m_running = true;
   m_reader = zloop_new();
   zloop_reader(m_reader, m_subscriber, MidiServer::receiveCallback, this);
   zloop_start(m_reader);
