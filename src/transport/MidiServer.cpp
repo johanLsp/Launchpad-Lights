@@ -34,18 +34,18 @@ void MidiServer::setupBeacon() {
 int MidiServer::receiveCallback(zloop_t* loop, zsock_t* reader, void* arg) {
   MidiServer* server = reinterpret_cast<MidiServer*>(arg);
   zframe_t* frame = zframe_recv(reader);
-  // Strip the topic
-  unsigned char* data = zframe_data(frame) + strlen("MidiIn ");
-  int length = zframe_size(frame) - strlen("MidiIn ");
-  ustring message_str(data, length);
-  server->receive(message_str);
+  // Strip the topic.
+  if (zframe_size(frame) < strlen("MidiIn ")) return -1;
+  const char* data = reinterpret_cast<const char*>(zframe_data(frame));
+  std::string message(data + strlen("MidiIn "),
+                      zframe_size(frame) - strlen("MidiIn "));
+  server->receive(message);
   zframe_destroy(&frame);
   return 0;
 }
 
-void MidiServer::send(const ustring& message) {
-  std::string data = std::string("MidiOut ")
-    + std::string(reinterpret_cast<const char*>(message.c_str()), message.size());
+void MidiServer::send(const std::string& message) {
+  std::string data = std::string("MidiOut ") + message;
   zframe_t* frame = zframe_new(data.c_str(), data.size());
   zframe_send(&frame, m_publisher, 0);
   zframe_destroy(&frame);

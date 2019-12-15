@@ -3,7 +3,8 @@
 #include "mapping/Mapping.h"
 
 
-void Device::send(const ustring& message) {
+void Device::send(const std::string& message) {
+  if (!isConnected()) return;
   m_transport->send(message);
 }
 

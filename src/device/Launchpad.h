@@ -7,13 +7,12 @@
 #include "device/Device.h"
 #include "rtmidi/RtMidi.h"
 #include "util/Color.h"
-#include "util/UString.h"
 
 class Launchpad : public Device {
  public:
   explicit Launchpad(Transport* transport);
 
-  void receive(Transport::Type type, const ustring& message) override;
+  void receive(Transport::Type type, const std::string& message) override;
 
   void setAllLed(uint8_t color);
   void setLed(uint8_t x, uint8_t y, uint8_t color);
@@ -32,7 +31,7 @@ class Launchpad : public Device {
 
  private:
   bool m_transactional = false;
-  ustring m_message;
+  std::string m_message;
 };
 
 #endif  // SRC_DEVICE_LAUNCHPAD_H_

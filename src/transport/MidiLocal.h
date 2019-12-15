@@ -2,6 +2,7 @@
 #ifndef SRC_TRANSPORT_MIDILOCAL_H_
 #define SRC_TRANSPORT_MIDILOCAL_H_
 
+#include <string>
 #include <vector>
 
 #include "rtmidi/RtMidi.h"
@@ -14,8 +15,8 @@ class MidiLocal : public Midi {
   ~MidiLocal();
 
   bool isConnected() override;
-  void send(const ustring& message) override;
-  void receiveCallback(cons ustring& message) { receive(message); }
+  void send(const std::string& message) override;
+  void receiveCallback(const std::string& message) { receive(message); }
 
  private:
   bool connect();

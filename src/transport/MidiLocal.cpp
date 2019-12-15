@@ -6,7 +6,7 @@
 void receive(double timestamp, std::vector<unsigned char>* message,
             void* data) {
   MidiLocal* midi = reinterpret_cast<MidiLocal*>(data);
-  ustring message_str(message->begin(), message->end());
+  std::string message_str(message->begin(), message->end());
   midi->receiveCallback(message_str);
 }
 
@@ -56,7 +56,7 @@ int MidiLocal::findLaunchpad(RtMidi* midi) {
   return -1;
 }
 
-void MidiLocal::send(const ustring& message) {
+void MidiLocal::send(const std::string& message) {
   std::vector<unsigned char> buffer(message.begin(), message.end());
   m_output->sendMessage(&buffer);
 }

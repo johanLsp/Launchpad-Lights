@@ -2,6 +2,7 @@
 #ifndef SRC_TRANSPORT_COLORSERVER_H_
 #define SRC_TRANSPORT_COLORSERVER_H_
 
+#include <string>
 #include <thread>
 #include <czmq.h>
 #include "transport/Transport.h"
@@ -15,7 +16,7 @@ class ColorServer : public Transport {
   void start();
   void stop();
 
-  void send(const ustring& message) override {}
+  void send(const std::string& message) override {}
 
  protected:
   Type type() override { return Type::COLOR; }

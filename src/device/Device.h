@@ -3,11 +3,11 @@
 #define SRC_DEVICE_DEVICE_H_
 
 #include <cstdint>
+#include <string>
 #include <vector>
 #include "rtmidi/RtMidi.h"
 #include "transport/Transport.h"
 #include "util/Color.h"
-#include "util/UString.h"
 
 class Mapping;
 class Device {
@@ -17,13 +17,13 @@ class Device {
     m_transport->setDevice(this);
   }
 
-  virtual void receive(Transport::Type type, const ustring& message) = 0;
+  virtual void receive(Transport::Type type, const std::string& message) = 0;
 
   void addMapping(Mapping* mapping);
   bool isConnected() { return m_transport->isConnected(); }
 
  protected:
-  void send(const ustring& message);
+  void send(const std::string& message);
   void noteOn(int channel, int note);
   void noteOff(int channel, int note);
   void setColors(const std::vector<Color>& colors);

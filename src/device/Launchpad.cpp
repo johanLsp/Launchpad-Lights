@@ -2,6 +2,7 @@
 #include "device/Launchpad.h"
 
 #include <functional>
+#include <sstream>
 
 #include "json.hpp"
 
@@ -9,24 +10,24 @@ using nlohmann::json;
 
 namespace {
   // See Launchpad MKII Programmer's Reference Manual.
-  static const ustring kNoteOff = {128_u};
-  static const ustring kNoteOn = {144_u};
-  static const ustring kFlash = {145_u};
-  static const ustring kPulse = {146_u};
-  static const ustring kCCFlash = {177_u};
-  static const ustring kCCPulse = {178_u};
-  static const ustring kSysEx = {240_u, 0_u, 32_u, 41_u, 2_u, 24_u};
-  static const ustring kSysExEnd = {247_u};
-  static const ustring kSysExLedStd = kSysEx + 10_u;
-  static const ustring kSysExLedRGB = kSysEx + 11_u;
-  static const ustring kSysExColumn = kSysEx + 12_u;
-  static const ustring kSysExRow = kSysEx + 13_u;
-  static const ustring kSysExAll = kSysEx + 14_u;
-  static const ustring kSysExFlash = kSysEx + 35_u;
-  static const ustring kSysExPulse = kSysEx + 40_u;
-  static const ustring kSysExScrollText = kSysEx + 20_u;
-  static const ustring kSysExLayout = kSysEx + 34_u;
-  static const ustring kSysExFader = kSysEx + 43_u;
+  static const std::string kNoteOff = {static_cast<char>(128)};
+  static const std::string kNoteOn = {static_cast<char>(144)};
+  static const std::string kFlash = {static_cast<char>(145)};
+  static const std::string kPulse = {static_cast<char>(146)};
+  static const std::string kCCFlash = {static_cast<char>(177)};
+  static const std::string kCCPulse = {static_cast<char>(178)};
+  static const std::string kSysEx = {static_cast<char>(240), 0, 32, 41, 2, 24};
+  static const std::string kSysExEnd = {static_cast<char>(247)};
+  static const std::string kSysExLedStd = kSysEx + static_cast<char>(10);
+  static const std::string kSysExLedRGB = kSysEx + static_cast<char>(11);
+  static const std::string kSysExColumn = kSysEx + static_cast<char>(12);
+  static const std::string kSysExRow = kSysEx + static_cast<char>(13);
+  static const std::string kSysExAll = kSysEx + static_cast<char>(14);
+  static const std::string kSysExFlash = kSysEx + static_cast<char>(35);
+  static const std::string kSysExPulse = kSysEx + static_cast<char>(40);
+  static const std::string kSysExScrollText = kSysEx + static_cast<char>(20);
+  static const std::string kSysExLayout = kSysEx + static_cast<char>(34);
+  static const std::string kSysExFader = kSysEx + static_cast<char>(43);
 }  // namespace
 
 Launchpad::Launchpad(Transport* transport)
@@ -34,7 +35,7 @@ Launchpad::Launchpad(Transport* transport)
   setAllLed(0);
 }
 
-void Launchpad::receive(Transport::Type type, const ustring& message) {
+void Launchpad::receive(Transport::Type type, const std::string& message) {
   switch (type) {
     case Transport::Type::MIDI: {
       if (message.size() < 3) return;
@@ -84,7 +85,7 @@ void Launchpad::setLed(uint8_t note, uint8_t red, uint8_t green,
   m_message += green * 63.0 / 255;
   m_message += blue  * 63.0 / 255;
 
-  if (!m_transactional && isConnected()) {
+  if (!m_transactional) {
     m_message += kSysExEnd;
     send(m_message);
   }
@@ -94,9 +95,10 @@ void Launchpad::setLed(uint8_t x, uint8_t y, uint8_t color) {
   if (x < 1 || x > 8) return;
   if (y < 1 || y > 8) return;
   uint8_t note = 10 * y + x;
-  if (isConnected()) {
-    send(kNoteOn + note + color);
-  }
+  std::string command = kNoteOn;
+  command += note;
+  command += color;
+  send(command);
 }
 
 void Launchpad::setLed(uint8_t x, uint8_t y, uint8_t red,
@@ -115,18 +117,19 @@ void Launchpad::setLed(uint8_t x, uint8_t y, Color color) {
 }
 
 void Launchpad::setAllLed(uint8_t color) {
-  if (isConnected()) {
-    send(kSysExAll + color + kSysExEnd);
-  }
+  std::string command = kSysExAll;
+  command += color;
+  command += kSysExEnd;
+  send(command);
 }
 
 void Launchpad::flashLed(uint8_t note, Color color) {
   setLed(note, color);
   //  CC message for top row, regular for all others
-  ustring channel = note > 100 ? kCCFlash : kFlash;
-  if (isConnected()) {
-    send(channel + note + 0_u);
-  }
+  std::string command = note > 100 ? kCCFlash : kFlash;
+  command += note;
+  command += static_cast<char>(0);
+  send(command);
 }
 
 void Launchpad::pulseLed(uint8_t x, uint8_t y, Color color) {
@@ -141,10 +144,10 @@ void Launchpad::pulseLed(uint8_t x, uint8_t y, Color color) {
 
 void Launchpad::pulseLed(uint8_t note, uint8_t color) {
   //  CC message for top row, regular for all others
-  ustring channel = note > 100 ? kCCPulse : kPulse;
-  if (isConnected()) {
-    send(channel + note + color);
-  }
+  std::string command = note > 100 ? kCCPulse : kPulse;
+  command += note;
+  command += color;
+  send(command);
 }
 
 void Launchpad::beginTransaction() {
@@ -155,17 +158,14 @@ void Launchpad::beginTransaction() {
 
 void Launchpad::commitTransaction() {
   m_message += kSysExEnd;
-  if (isConnected()) {
-      send(m_message);
-  }
+  send(m_message);
   m_transactional = false;
 }
 
 void Launchpad::scrollText(const std::string& text) {
-  ustring utext(text.begin(), text.end());
-  if (isConnected()) {
-    send(kSysExScrollText + utext + kSysExEnd);
-  }
+  std::ostringstream command;
+  command << kSysExScrollText << text << kSysExEnd;
+  send(command.str());
 }
 
 

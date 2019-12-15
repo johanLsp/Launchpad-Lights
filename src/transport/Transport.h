@@ -6,7 +6,6 @@
 #include <string>
 
 #include "rtmidi/RtMidi.h"
-#include "util/UString.h"
 
 class Device;
 
@@ -18,10 +17,10 @@ class Transport {
 
   virtual bool isConnected() { return m_connected; }
 
-  virtual void send(const ustring& message) = 0;
+  virtual void send(const std::string& message) = 0;
 
  protected:
-  void receive(const ustring& message);
+  void receive(const std::string& message);
   virtual Type type() { return Type::INVALID; }
 
   bool m_connected;

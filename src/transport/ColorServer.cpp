@@ -15,9 +15,8 @@ void ColorServer::run() {
   while (m_running) {
     zpoller_t* poller = zpoller_new(m_server, NULL);
     if (!zpoller_wait(poller, 200)) continue;
-    char *message = zstr_recv(m_server);
-    ustring message_str(reinterpret_cast<unsigned char*>(message));
-    receive(message_str);
+    char* message = zstr_recv(m_server);
+    receive(message);
     zstr_free(&message);
   }
 }
