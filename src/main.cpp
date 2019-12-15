@@ -5,6 +5,7 @@
 #include "lights/LightGroup.h"
 #include "lights/LedPwm.h"
 #include "lights/LedRemote.h"
+#include "lights/LightBluetooth.h"
 #include "mapping/DirectMapping.h"
 #include "mapping/SequencerMapping.h"
 #include "transport/ColorServer.h"
@@ -28,9 +29,11 @@ enum Connected {None, Local, Remote, Color};
 int main(int argc, char** argv) {
   LedPwm ledPwm;
   LedRemote ledRemote;
+  LightBluetooth lightBle;
   LightGroup group;
   group.addLight(&ledRemote);
   group.addLight(&ledPwm);
+  group.addLight(&lightBle);
   group.setColor(Color::White);
 
   MidiLocal midiLocal;

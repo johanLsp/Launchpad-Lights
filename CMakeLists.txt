@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 add_definitions("-Wno-psabi")
 
-FIND_PACKAGE( Boost 1.40 COMPONENTS system chrono REQUIRED )
+FIND_PACKAGE( Boost 1.40 COMPONENTS system filesystem chrono REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 find_package (Threads)

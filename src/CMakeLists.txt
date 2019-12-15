@@ -5,6 +5,7 @@ set(SOURCE_FILES
     device/Launchpad.cpp
     lights/LedPwm.cpp
     lights/LedRemote.cpp
+    lights/LightBluetooth.cpp
     mapping/DirectMapping.cpp
     mapping/SequencerMapping.cpp
     mapping/page/ColorPage.cpp
@@ -20,7 +21,7 @@ include_directories(.)
 add_executable(lights ${SOURCE_FILES})
 
 target_link_libraries(lights -L/usr/local/lib/)
-target_link_libraries(lights ${Boost_LIBRARIES})
+target_link_libraries(lights ${Boost_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY})
 target_link_libraries(lights ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(lights ${wiringPi_LIB})
 target_link_libraries(lights -lcrypt -lrtmidi)
