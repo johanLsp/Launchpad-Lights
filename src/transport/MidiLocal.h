@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "rtmidi/RtMidi.h"
+#include "RtMidi.h"
 #include "transport/Transport.h"
 
 

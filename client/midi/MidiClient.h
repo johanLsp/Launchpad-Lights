@@ -6,7 +6,7 @@
 #include <string>
 #include <thread>
 
-#include "rtmidi/RtMidi.h"
+#include "RtMidi.h"
 
 class MidiClient {
  public:

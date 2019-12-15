@@ -45,6 +45,7 @@ void MidiClient::attachMidi() {
       bool connected = false;
       for (int i = 0; i < nPorts; i++) {
         std::string name = m_output->getPortName(i);
+        std::cout << name << std::endl;
         if (name.compare(0, 9, "Launchpad") == 0) {
           std::cout << "Output : " << name << std::endl;
           m_output->openPort(i);
