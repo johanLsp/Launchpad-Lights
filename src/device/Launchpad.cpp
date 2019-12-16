@@ -70,6 +70,11 @@ void Launchpad::receive(Transport::Type type, const std::string& message) {
         Color color(c["red"], c["green"], c["blue"]);
         colors.push_back(color);
       }
+      if (colors.size() <= 1) {
+        changeMapping(0);
+      } else {
+	changeMapping(1);
+      }
       setColors(colors);
     }
   }

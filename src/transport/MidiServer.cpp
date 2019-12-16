@@ -80,7 +80,7 @@ void MidiServer::stop() {
   m_running = false;
   zloop_reader_end(m_reader, m_subscriber);
   zloop_destroy(&m_reader);
-  m_thread->join();
+  //m_thread->join();
   delete m_thread;
 }
 

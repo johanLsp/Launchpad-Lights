@@ -34,6 +34,13 @@ void Device::changeMapping() {
   m_mappings[m_mapping_idx]->start();
 }
 
+void Device::changeMapping(int index) {
+  if (index == m_mapping_idx || index >= m_mappings.size()) return;
+  m_mappings[m_mapping_idx]->stop();
+  m_mapping_idx = index;
+  m_mappings[m_mapping_idx]->start();
+}
+
 void Device::refresh() {
   m_mappings[m_mapping_idx]->refresh();
 }

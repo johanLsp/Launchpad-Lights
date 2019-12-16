@@ -51,3 +51,9 @@ void DirectMapping::noteOff(int channel, int note) {
     m_light->setColor(0, 0, 0);
   }
 }
+
+void DirectMapping::setColors(const std::vector<Color>& colors) {
+  if (colors.empty()) return;
+  m_light->setColor(colors[0]);
+}
+

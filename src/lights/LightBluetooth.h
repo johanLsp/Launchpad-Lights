@@ -3,6 +3,7 @@
 #ifndef SRC_LIGHTS_LIGHTBLUETOOTH_H_
 #define SRC_LIGHTS_LIGHTBLUETOOTH_H_
 
+#include <memory>
 #include <string>
 #include <boost/process/child.hpp>
 
@@ -21,9 +22,9 @@ class LightBluetooth : public Light {
   bool connect();
   void disconnect();
 
-  boost::process::child m_light_child;
-  boost::process::ipstream m_light_in;
-  boost::process::opstream m_light_out;
+  std::unique_ptr<boost::process::child> m_light_child;
+  std::unique_ptr<boost::process::ipstream> m_light_in;
+  std::unique_ptr<boost::process::opstream> m_light_out;
 
   Color m_currentColor;
   bool m_connected;

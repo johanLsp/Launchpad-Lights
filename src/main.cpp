@@ -49,12 +49,13 @@ int main(int argc, char** argv) {
   DirectMapping direct(&launchpadColor, &group);
   SequencerMapping sequencer(&launchpadColor, &group);
 
+  launchpadLocal.addMapping(&direct);
+  launchpadServer.addMapping(&direct);
+  launchpadColor.addMapping(&direct);
+
   launchpadLocal.addMapping(&sequencer);
   launchpadServer.addMapping(&sequencer);
   launchpadColor.addMapping(&sequencer);
-
-  launchpadLocal.addMapping(&direct);
-  launchpadServer.addMapping(&direct);
 
   Connected connected = None;
 

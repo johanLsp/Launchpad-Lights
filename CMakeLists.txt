@@ -16,8 +16,6 @@ find_package(czmq)
 include_directories(${CZMQ_INCLUDE_DIRS})
 find_package(RTMidi)
 include_directories(${RTMIDI_INCLUDE_DIRS})
-message(${RTMIDI_INCLUDE_DIRS})
-
 
 if (NOT BUILD_CLIENT_ONLY)
   find_package(Boost 1.64 COMPONENTS system filesystem chrono REQUIRED)

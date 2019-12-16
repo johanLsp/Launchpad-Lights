@@ -10,7 +10,7 @@ class DirectMapping : public Mapping {
   DirectMapping(Launchpad* launchpad, Light* light);
   void noteOn(int channel, int note) override;
   void noteOff(int channel, int note) override;
-  void setColors(const std::vector<Color>& colors) override {}
+  void setColors(const std::vector<Color>& colors) override;
   void start() override;
   void stop() override;
   void refresh() override;
