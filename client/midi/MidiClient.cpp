@@ -75,6 +75,12 @@ void MidiClient::attachMidi() {
     forwardRemote(m_midiConnected ? "Connected" : "Disconnected");
     sleep(1);
   }
+  // Cleanup after the main loop.
+  if (m_midiConnected) {
+    m_output->closePort();
+    m_input->closePort();
+    forwardRemote("Disconnected");
+  }
 }
 
 void MidiClient::attachServer() {
