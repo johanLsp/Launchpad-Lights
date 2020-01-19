@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <string>
+#include <thread>
 #include <boost/process/child.hpp>
 
 #include "lights/Light.h"
@@ -21,10 +22,15 @@ class LightBluetooth : public Light {
  private:
   bool connect();
   void disconnect();
+  void run();
 
   std::unique_ptr<boost::process::child> m_light_child;
   std::unique_ptr<boost::process::ipstream> m_light_in;
   std::unique_ptr<boost::process::opstream> m_light_out;
+
+  std::unique_ptr<std::thread> m_thread;
+  bool m_update;
+  bool m_running;
 
   Color m_currentColor;
   bool m_connected;
