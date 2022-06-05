@@ -26,6 +26,9 @@ SequencerMapping::SequencerMapping(Launchpad* launchpad, Light* light)
       }
     });
 
+  m_link->setNumPeersCallback([] (const size_t numPeers) {
+      std::cout << "Link: " << numPeers << " peer(s) connected." << std::endl;
+    });
   m_link->enable(true);
   m_syncCounter = 0;
   m_syncBegin = bclock::now();
