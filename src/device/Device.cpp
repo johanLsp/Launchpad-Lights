@@ -35,10 +35,15 @@ void Device::changeMapping() {
 }
 
 void Device::changeMapping(int index) {
-  if (index == m_mapping_idx || index >= m_mappings.size()) return;
-  m_mappings[m_mapping_idx]->stop();
+  if (index >= m_mappings.size()) return;
+  for (int i = 0; i < m_mappings.size(); i++) {
+    if (i == index) {
+      m_mappings[i]->start();
+    } else {
+      m_mappings[i]->stop();
+    }
+  }
   m_mapping_idx = index;
-  m_mappings[m_mapping_idx]->start();
 }
 
 void Device::refresh() {
